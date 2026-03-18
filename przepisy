@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuchnia Ajurwedyjska & TMC</title>
+<style>
+  :root {
+    --gold: #c8963e;
+    --gold-light: #f5e6c8;
+    --brown: #6b4226;
+    --cream: #fdf6ec;
+    --green: #5a7a52;
+    --text: #2d1f0e;
+    --muted: #8a6a4a;
+    --card: #fff9f0;
+    --border: #e8d5b0;
+    --shadow: 0 2px 12px rgba(107,66,38,0.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Georgia', serif; background: var(--cream); color: var(--text); font-size: 16px; line-height: 1.6; }
+
+  /* HEADER */
+  header { background: linear-gradient(135deg, var(--brown) 0%, #3d1f0a 100%); color: white; padding: 20px 16px 14px; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+  header h1 { font-size: 1.25rem; letter-spacing: 0.03em; color: var(--gold-light); margin-bottom: 2px; }
+  header p { font-size: 0.78rem; color: #d4b896; font-style: italic; }
+
+  /* SEARCH */
+  .search-bar { padding: 12px 16px; background: white; border-bottom: 1px solid var(--border); }
+  .search-bar input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 24px; font-size: 1rem; font-family: inherit; background: var(--cream); color: var(--text); outline: none; }
+  .search-bar input:focus { border-color: var(--gold); }
+
+  /* NAV CHAPTERS */
+  .chapter-nav { display: flex; overflow-x: auto; background: white; border-bottom: 2px solid var(--border); padding: 0 8px; gap: 4px; scrollbar-width: none; }
+  .chapter-nav::-webkit-scrollbar { display: none; }
+  .chapter-nav button { flex-shrink: 0; padding: 10px 14px; border: none; background: none; font-family: inherit; font-size: 0.82rem; color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: all 0.2s; }
+  .chapter-nav button.active { color: var(--brown); border-bottom-color: var(--gold); font-weight: bold; }
+  .chapter-nav button:hover { color: var(--brown); }
+
+  /* MAIN */
+  main { padding: 12px 14px 80px; max-width: 680px; margin: 0 auto; }
+
+  /* CHAPTER HEADER */
+  .chapter-header { text-align: center; padding: 18px 0 10px; }
+  .chapter-header h2 { font-size: 1.1rem; color: var(--brown); letter-spacing: 0.05em; text-transform: uppercase; }
+  .chapter-header p { font-size: 0.82rem; color: var(--muted); font-style: italic; margin-top: 4px; }
+
+  /* RECIPE CARD */
+  .recipe-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 14px; overflow: hidden; box-shadow: var(--shadow); }
+  .recipe-card-header { padding: 14px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .recipe-card-header:active { background: var(--gold-light); }
+  .recipe-num { font-size: 0.72rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.08em; font-style: normal; display: block; margin-bottom: 2px; }
+  .recipe-title { font-size: 1.02rem; color: var(--brown); font-weight: bold; line-height: 1.3; }
+  .recipe-subtitle { font-size: 0.8rem; color: var(--muted); margin-top: 3px; font-style: italic; }
+  .recipe-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 7px; }
+  .tag { background: var(--gold-light); color: var(--brown); font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; border: 1px solid var(--border); }
+  .tag.tm { background: #e8f0e8; color: var(--green); border-color: #c5d9c5; }
+  .chevron { font-size: 1.1rem; color: var(--gold); flex-shrink: 0; transition: transform 0.25s; margin-top: 4px; }
+  .recipe-card.open .chevron { transform: rotate(180deg); }
+
+  /* RECIPE BODY */
+  .recipe-body { display: none; border-top: 1px solid var(--border); }
+  .recipe-card.open .recipe-body { display: block; }
+
+  /* TABS (TM / Garnek) */
+  .method-tabs { display: flex; border-bottom: 1px solid var(--border); }
+  .method-tab { flex: 1; padding: 9px 6px; text-align: center; font-size: 0.82rem; cursor: pointer; border: none; background: none; font-family: inherit; color: var(--muted); border-bottom: 2px solid transparent; }
+  .method-tab.active { color: var(--green); border-bottom-color: var(--green); font-weight: bold; }
+
+  /* CONTENT SECTIONS */
+  .recipe-section { padding: 14px 16px; }
+  .recipe-section + .recipe-section { border-top: 1px dashed var(--border); }
+  .section-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); font-weight: bold; margin-bottom: 8px; }
+
+  /* INGREDIENTS */
+  .ingredient-list { list-style: none; }
+  .ingredient-list li { padding: 5px 0; font-size: 0.92rem; display: flex; align-items: flex-start; gap: 8px; border-bottom: 1px dotted #e8d5b0; }
+  .ingredient-list li:last-child { border-bottom: none; }
+  .ingredient-list li::before { content: "●"; color: var(--gold); font-size: 0.6rem; margin-top: 5px; flex-shrink: 0; }
+
+  /* STEPS */
+  .step-list { list-style: none; counter-reset: steps; }
+  .step-list li { counter-increment: steps; padding: 8px 0 8px 36px; font-size: 0.92rem; position: relative; border-bottom: 1px dotted #e8d5b0; }
+  .step-list li:last-child { border-bottom: none; }
+  .step-list li::before { content: counter(steps); position: absolute; left: 0; top: 6px; background: var(--gold); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; font-style: normal; }
+
+  /* TIPS */
+  .tip-box { background: #fff8e8; border-left: 3px solid var(--gold); padding: 10px 13px; border-radius: 0 8px 8px 0; font-size: 0.87rem; color: var(--text); margin-top: 6px; }
+  .tip-box strong { color: var(--brown); }
+
+  /* PROPERTIES */
+  .prop-list { list-style: none; }
+  .prop-list li { padding: 4px 0; font-size: 0.87rem; display: flex; gap: 8px; }
+  .prop-list li::before { content: "🌿"; font-size: 0.8rem; flex-shrink: 0; }
+
+  /* WARNING */
+  .warning-box { background: #fff0e8; border-left: 3px solid #d4763a; padding: 10px 13px; border-radius: 0 8px 8px 0; font-size: 0.87rem; margin-top: 6px; }
+
+  /* PROTOCOL PAGE */
+  .protocol-box { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 14px; box-shadow: var(--shadow); }
+  .protocol-box h3 { color: var(--brown); font-size: 1rem; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .protocol-box p, .protocol-box li { font-size: 0.9rem; line-height: 1.65; }
+  .protocol-box ul { padding-left: 18px; margin-top: 8px; }
+  .protocol-box li { margin-bottom: 4px; }
+  .phase-badge { display: inline-block; background: var(--gold); color: white; font-size: 0.72rem; padding: 2px 10px; border-radius: 10px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+
+  /* DEKALOG */
+  .rule-item { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px dotted var(--border); }
+  .rule-num { background: var(--brown); color: white; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0; font-weight: bold; }
+  .rule-text { font-size: 0.9rem; }
+  .rule-text strong { color: var(--brown); }
+
+  /* SPICE TABLE */
+  .spice-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+  .spice-table th { background: var(--brown); color: white; padding: 8px 10px; text-align: left; font-weight: normal; }
+  .spice-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .spice-table tr:nth-child(even) td { background: var(--gold-light); }
+
+  /* SHOPPING LIST */
+  .shop-category { margin-bottom: 14px; }
+  .shop-category h4 { color: var(--brown); font-size: 0.88rem; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid var(--border); }
+  .shop-item { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: 0.88rem; border-bottom: 1px dotted #e8d5b0; }
+  .shop-item:last-child { border-bottom: none; }
+  .shop-check { width: 20px; height: 20px; border: 2px solid var(--border); border-radius: 4px; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; background: white; transition: all 0.15s; }
+  .shop-check.checked { background: var(--green); border-color: var(--green); color: white; }
+
+  /* HIDDEN */
+  .page { display: none; }
+  .page.active { display: block; }
+  .recipe-card.hidden { display: none; }
+
+  /* BOTTOM NAV */
+  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid var(--border); display: flex; padding: 6px 0 max(6px, env(safe-area-inset-bottom)); z-index: 200; }
+  .bottom-nav button { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; border: none; background: none; color: var(--muted); font-size: 0.65rem; padding: 4px 2px; cursor: pointer; font-family: inherit; transition: color 0.2s; }
+
+  /* FAZY */
+  .phase-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 14px; overflow: hidden; box-shadow: var(--shadow); }
+  .phase-card-header { padding: 14px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  .phase-card-header:active { background: var(--gold-light); }
+  .phase-card-body { display: none; border-top: 1px solid var(--border); padding: 14px 16px; }
+  .phase-card.open .phase-card-body { display: block; }
+  .phase-card.open .chevron { transform: rotate(180deg); }
+  .phase-title { font-size: 1rem; color: var(--brown); font-weight: bold; }
+  .phase-desc { font-size: 0.8rem; color: var(--muted); font-style: italic; margin-top: 3px; }
+  .phase-goal { background: var(--gold-light); border-left: 3px solid var(--gold); padding: 8px 12px; border-radius: 0 8px 8px 0; font-size: 0.85rem; margin-bottom: 14px; }
+  .phase-goal strong { color: var(--brown); }
+  .food-group { margin-bottom: 14px; }
+  .food-group-title { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); font-weight: bold; margin-bottom: 7px; display: flex; align-items: center; gap: 6px; }
+  .food-list { list-style: none; }
+  .food-list li { padding: 5px 0 5px 20px; font-size: 0.88rem; position: relative; border-bottom: 1px dotted var(--border); }
+  .food-list li:last-child { border-bottom: none; }
+  .food-list li::before { content: "●"; color: var(--gold); font-size: 0.55rem; position: absolute; left: 4px; top: 8px; }
+  .food-list li em { color: var(--muted); font-size: 0.82rem; }
+  .post-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; margin-top: 8px; }
+  .post-table th { background: var(--brown); color: white; padding: 8px 10px; text-align: left; font-weight: normal; font-size: 0.8rem; }
+  .post-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.5; }
+  .post-table tr:nth-child(even) td { background: var(--gold-light); }
+  .golden-rule { background: #fff0e8; border: 1px solid #d4763a; border-radius: 10px; padding: 12px 14px; font-size: 0.87rem; margin-top: 12px; }
+  .golden-rule strong { color: #a0501a; display: block; margin-bottom: 4px; }
+  .bottom-nav button.active { color: var(--brown); }
+  .bottom-nav button span.icon { font-size: 1.3rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Kuchnia Ajurwedyjska & TMC</h1>
+  <p>22 przepisy · Thermomix & tradycyjne</p>
+</header>
+
+<!-- PAGE: RECIPES -->
+<div class="page active" id="page-recipes">
+  <div class="search-bar">
+    <input type="search" id="search-input" placeholder="🔍 Szukaj przepisu..." oninput="filterRecipes()">
+  </div>
+  <nav class="chapter-nav" id="chapter-nav">
+    <button class="active" onclick="filterChapter('all', this)">Wszystkie</button>
+    <button onclick="filterChapter('congee', this)">I. Congee</button>
+    <button onclick="filterChapter('kasze', this)">II. Kasze</button>
+    <button onclick="filterChapter('ryz', this)">III. Ryż</button>
+    <button onclick="filterChapter('zupy', this)">IV. Zupy</button>
+    <button onclick="filterChapter('warzywa', this)">V. Warzywa</button>
+    <button onclick="filterChapter('napoje', this)">VI. Napoje</button>
+    <button onclick="filterChapter('desery', this)">VII. Desery</button>
+    <button onclick="filterChapter('bazy', this)">VIII. Bazy</button>
+  </nav>
+  <main id="recipe-list">
+    <!-- Recipes injected by JS -->
+  </main>
+</div>
+
+<!-- PAGE: PROTOCOL -->
+<div class="page" id="page-protocol">
+  <main>
+    <div class="chapter-header">
+      <h2>Protokół 3-dniowego Postu</h2>
+      <p>Reset trawienia według Ajurwedy i TMC</p>
+    </div>
+
+    <div class="protocol-box">
+      <span class="phase-badge">Faza 1 · Dni -3 do -1 · Wejście</span>
+      <h3>Przygotowanie do Postu</h3>
+      <p>Stopniowe odstawianie ciężkostrawnych produktów. Cel: wygasić stany zapalne i przygotować jelita.</p>
+      <ul>
+        <li>Odstaw mięso, nabiał, cukier, alkohol, gluten</li>
+        <li>Jedz kasze (jaglana, quinoa), warzywa gotowane, ryż basmati</li>
+        <li>Pij ciepłą wodę przez cały dzień (małymi łykami)</li>
+        <li>Dodaj Złote Mleko na wieczór</li>
+        <li>Ostatni dzień: tylko kleik ryżowy i gotowane warzywa</li>
+      </ul>
+    </div>
+
+    <div class="protocol-box">
+      <span class="phase-badge">Faza 2 · Dni 1–3 · Post</span>
+      <h3>Post Congee</h3>
+      <p>Podstawa: Ratunkowe Congee (Przepis 1). Jeden składnik, maksymalny efekt.</p>
+      <ul>
+        <li><strong>Dzień 1–2:</strong> Tylko Congee z imbirem, koprem i skórką pomarańczy. 3–4 porcje dziennie.</li>
+        <li><strong>Dzień 3:</strong> Jeśli brak gazów → Congee z fasolką mung (Przepis 2)</li>
+        <li>Pij Herbatę Trawienia (Przepis 17) między posiłkami</li>
+        <li>Pij Złotą Wodę (Przepis 16) rano na czczo</li>
+        <li>Absolutnie bez surowych warzyw, owoców, nabiału, mięsa</li>
+        <li>Minimum 2 litry ciepłej wody dziennie</li>
+      </ul>
+      <div class="tip-box"><strong>Obserwacja:</strong> Jeśli po Congee z mung poczujesz twardy brzuch lub gazy – wróć do czystego Congee na kolejny posiłek.</div>
+    </div>
+
+    <div class="protocol-box">
+      <span class="phase-badge">Faza 3 · Dni 4–7 · Wyjście</span>
+      <h3>Stopniowe Wyjście</h3>
+      <p>Równie ważne co sam post. Nie wolno „skoczyć" od razu na normalne jedzenie.</p>
+      <ul>
+        <li><strong>Dzień 4:</strong> Congee + Jaglanka z jabłkiem (Przepis 3)</li>
+        <li><strong>Dzień 5:</strong> + Ryż basmati (Przepis 7 lub 8) + Zupa dyniowa (Przepis 10)</li>
+        <li><strong>Dzień 6:</strong> + Kasza jaglana z quinoą (Przepis 4 lub 5) + Krem z buraka (Przepis 11)</li>
+        <li><strong>Dzień 7:</strong> + Pieczone warzywa (Przepis 13) + Złote Mleko (Przepis 15)</li>
+        <li>Wracaj do produktów po jednym na raz – obserwuj reakcje</li>
+      </ul>
+    </div>
+
+    <div class="protocol-box">
+      <h3>⚡ Zasady podczas całego protokołu</h3>
+      <ul>
+        <li>Nigdy zimne posiłki ani napoje</li>
+        <li>Nigdy mikrofalówka – tylko garnek lub Thermomix</li>
+        <li>Jedz powoli, żuj 20–30 razy każdy kęs</li>
+        <li>Ostatni posiłek max. o 19:00</li>
+        <li>Odpoczynek i ciepło – to jest czas na regenerację</li>
+      </ul>
+    </div>
+  </main>
+</div>
+
+<!-- PAGE: DEKALOG -->
+<div class="page" id="page-dekalog">
+  <main>
+    <div class="chapter-header">
+      <h2>Dekalog Zdrowego Jedzenia</h2>
+      <p>13 zasad Ajurwedy i TMC</p>
+    </div>
+
+    <div class="protocol-box">
+      <div class="rule-item"><div class="rule-num">1</div><div class="rule-text"><strong>ZAWSZE NA CIEPŁO.</strong> Zimne posiłki i napoje osłabiają „ogień trawienny" (Agni) i tworzą śluz.</div></div>
+      <div class="rule-item"><div class="rule-num">2</div><div class="rule-text"><strong>BEZ MIKROFALÓWKI.</strong> Zawsze podgrzewaj w garnku na małym ogniu z odrobiną wody.</div></div>
+      <div class="rule-item"><div class="rule-num">3</div><div class="rule-text"><strong>ŻUCIE.</strong> Każdy kęs żuj co najmniej 20–30 razy. Trawienie zaczyna się w ustach.</div></div>
+      <div class="rule-item"><div class="rule-num">4</div><div class="rule-text"><strong>GHEE &gt; OLEJ.</strong> Masło klarowane najlepiej wspiera trawienie i jest nośnikiem dla przypraw.</div></div>
+      <div class="rule-item"><div class="rule-num">5</div><div class="rule-text"><strong>CIEPŁA WODA.</strong> Pij małymi łykami przez cały dzień. Zimna woda „gasi piec".</div></div>
+      <div class="rule-item"><div class="rule-num">6</div><div class="rule-text"><strong>IMBIR, KUMIN, KOPER.</strong> Twoja codzienna apteczka. Dodaj do każdego dania.</div></div>
+      <div class="rule-item"><div class="rule-num">7</div><div class="rule-text"><strong>OSTATNI POSIŁEK DO 19:00.</strong> Trawienie wieczorem jest najsłabsze – daj ciału czas na odpoczynek.</div></div>
+      <div class="rule-item"><div class="rule-num">8</div><div class="rule-text"><strong>MIÓD NIGDY DO GORĄCYCH NAPOJÓW.</strong> Podgrzany miód tworzy „Amę" (toksyny). Dodawaj tylko gdy przestanie parzyć.</div></div>
+      <div class="rule-item"><div class="rule-num">9</div><div class="rule-text"><strong>PŁUCZ KASZE I RYŻ.</strong> Usuwasz goryczkę (jaglanka) i nadmiar skrobi (ryż), która fermentuje w jelitach.</div></div>
+      <div class="rule-item"><div class="rule-num">10</div><div class="rule-text"><strong>ODPOCZYNEK PO POSIŁKU.</strong> 10–15 minut spokoju. Nie od razu bieganie ani praca.</div></div>
+      <div class="rule-item"><div class="rule-num">11</div><div class="rule-text"><strong>BROKUŁ TYLKO ZMIKSOWANY.</strong> Całe różyczki produkują gazy. W formie zupy-krem – bezpieczne.</div></div>
+      <div class="rule-item"><div class="rule-num">12</div><div class="rule-text"><strong>ŚWIEŻY IMBIR DO ODGRZEWANIA.</strong> „Naprawia" zmęczenie przechowywanego jedzenia i pobudza Qi.</div></div>
+      <div class="rule-item" style="border-bottom:none"><div class="rule-num">13</div><div class="rule-text"><strong>OBSERWUJ SWÓJ BRZUCH.</strong> Każde ciało jest inne. Jeśli coś powoduje gazy – usuń to i wróć za tydzień.</div></div>
+    </div>
+
+    <div class="chapter-header" style="margin-top:10px">
+      <h2>Apteczka Przyprawowa</h2>
+    </div>
+    <div class="protocol-box" style="padding:0; overflow:hidden">
+      <table class="spice-table">
+        <tr><th>Przyprawa</th><th>Działanie</th><th>Gdzie stosować</th></tr>
+        <tr><td><strong>Imbir</strong></td><td>Rozpala Agni, rusza zastoje, odkażający</td><td>Wszędzie – Congee, kasze, zupy, herbata</td></tr>
+        <tr><td><strong>Kumin</strong></td><td>Neutralizuje gazy, wspomaga trawienie</td><td>Kasze, zupy, ryż, strączki</td></tr>
+        <tr><td><strong>Koper włoski</strong></td><td>Pogromca wzdęć, przepycha zalegające jedzenie</td><td>Herbata trawienia, Congee</td></tr>
+        <tr><td><strong>Kardamon</strong></td><td>Usuwa mgłę mózgową, rozprasza śluz</td><td>Kakao, jaglanka, mleko, napoje</td></tr>
+        <tr><td><strong>Kurkuma</strong></td><td>Przeciwzapalna, oczyszcza krew, wspiera wątrobę</td><td>Złote Mleko, zupy, ryż</td></tr>
+        <tr><td><strong>Cynamon</strong></td><td>Reguluje krążenie energii, stabilizuje cukier</td><td>Jaglanka, pieczone jabłka, kakao</td></tr>
+        <tr><td><strong>Asafetyda (hing)</strong></td><td>Legendarnie na gazy i fermentację</td><td>Oliwa, zupy, strączki</td></tr>
+        <tr><td><strong>Czarny pieprz</strong></td><td>Aktywuje kurkumę (piperyna), rozgrzewa</td><td>Złote Mleko, Złota Woda</td></tr>
+      </table>
+    </div>
+
+    <div class="chapter-header" style="margin-top:10px">
+      <h2>Lista Zakupów</h2>
+    </div>
+    <div class="protocol-box">
+      <div class="shop-category">
+        <h4>Zboża i kasze</h4>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Kasza jaglana</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Quinoa (biała)</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Ryż biały (okrągły / jaśminowy)</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Ryż basmati</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Płatki owsiane (górskie)</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Fasolka mung (żółta łuskana)</div>
+      </div>
+      <div class="shop-category">
+        <h4>Tłuszcze</h4>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Masło Ghee (klarowane)</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Oliwa z oliwek extra virgin</div>
+      </div>
+      <div class="shop-category">
+        <h4>Przyprawy</h4>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Świeży imbir (korzeń)</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Kumin (nasiona i mielony)</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Kurkuma</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Cynamon mielony</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Kardamon (ziarna)</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Koper włoski (nasiona)</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Asafetyda / hing</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Czarny pieprz</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Gałka muszkatołowa</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Skórka suszonej pomarańczy / Chenpi</div>
+      </div>
+      <div class="shop-category">
+        <h4>Warzywa i owoce</h4>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Dynia hokkaido</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Marchew</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Pietruszka (korzeń)</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Buraki</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Brokuł</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Jabłka</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Śliwki suszone</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Daktyle</div>
+      </div>
+      <div class="shop-category">
+        <h4>Napoje i inne</h4>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Mleko owsiane (bez cukru)</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Mleko migdałowe (bez cukru)</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Kakao ceremonialne</div>
+        <div class="shop-item"><div class="shop-check" onclick="toggleCheck(this)"></div>Herbata Rooibos</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- PAGE: FAZY -->
+<div class="page" id="page-fazy">
+  <main>
+    <div class="chapter-header">
+      <h2>Fazy Żywieniowe</h2>
+      <p>Co jeść zależnie od etapu cyklu i protokołu</p>
+    </div>
+
+    <!-- FAZA 1 -->
+    <div class="phase-card open">
+      <div class="phase-card-header" onclick="togglePhase(this)">
+        <div>
+          <div class="phase-title">🩸 Faza 1 – Szpital Polowy</div>
+          <div class="phase-desc">Miesiączka i pierwsze dni regeneracji</div>
+        </div>
+        <span class="chevron" style="font-size:1.1rem;color:var(--gold);transition:transform 0.25s">▼</span>
+      </div>
+      <div class="phase-card-body">
+        <div class="phase-goal"><strong>Cel:</strong> Dogrzewanie podbrzusza, odbudowa Krwi (TMC), osuszanie flegmy i relaks dla jelit. Zero wzdęć, zero chrupania.</div>
+
+        <div class="food-group">
+          <div class="food-group-title">🌾 Węglowodany – baza na ciepło</div>
+          <ul class="food-list">
+            <li>Kasza jaglana <em>(osuszająca flegmę)</em></li>
+            <li>Biały ryż / Ryż basmati <em>(najlżejszy dla żołądka)</em></li>
+            <li>Płatki owsiane górskie <em>(mocno ugotowane na wodzie lub mleku roślinnym)</em></li>
+            <li>Budyń ze skrobi <em>(ugotowany na ciepło, bez mleka krowiego)</em></li>
+          </ul>
+        </div>
+
+        <div class="food-group">
+          <div class="food-group-title">🥚 Białko – budowanie siły</div>
+          <ul class="food-list">
+            <li>Jajka <em>(tylko na miękko, w koszulce lub kremowa jajecznica na maśle)</em></li>
+            <li>Długo gotowany bulion mocy <em>(na kościach lub wegański, esencjonalny)</em></li>
+            <li>Długo duszone, miękkie mięso <em>(potrawka z kurczaka/indyka, krojona drobno)</em></li>
+          </ul>
+        </div>
+
+        <div class="food-group">
+          <div class="food-group-title">🥕 Warzywa – tylko ciepły kompres</div>
+          <ul class="food-list">
+            <li>Dynia, marchew, batat, korzeń pietruszki <em>(gotowane do miękkości, pieczone w folii lub blendowane na krem)</em></li>
+          </ul>
+        </div>
+
+        <div class="food-group">
+          <div class="food-group-title">🍎 Owoce – tylko po obróbce</div>
+          <ul class="food-list">
+            <li>Jabłka <em>(ugotowane, pieczone, prażone z cynamonem)</em></li>
+          </ul>
+        </div>
+
+        <div class="food-group">
+          <div class="food-group-title">🧈 Tłuszcze – ratunek na głód</div>
+          <ul class="food-list">
+            <li>Masło Ghee (klarowane) <em>– absolutny numer jeden</em></li>
+            <li>Dobrej jakości oliwa z oliwek <em>(do polewania zup)</em></li>
+          </ul>
+        </div>
+
+        <div class="food-group">
+          <div class="food-group-title">🍫 Legalne słodycze i dodatki</div>
+          <ul class="food-list">
+            <li>Gorąca woda z imbirem <em>(zawsze rano)</em></li>
+            <li>Gorzka czekolada 70–80% <em>(max 2–3 kostki, rozpuszczana w ustach lub w owsiance)</em></li>
+            <li>Syrop klonowy <em>(w małych ilościach, jako bezpieczne słodzidło)</em></li>
+            <li>Cynamon, imbir, kumin, kurkuma <em>(obowiązkowo podsmażane – Tarka!)</em></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAZA 2 -->
+    <div class="phase-card">
+      <div class="phase-card-header" onclick="togglePhase(this)">
+        <div>
+          <div class="phase-title">⚖️ Faza 2 – Złoty Środek</div>
+          <div class="phase-desc">Stopniowy powrót do normalności (do Świąt)</div>
+        </div>
+        <span class="chevron" style="font-size:1.1rem;color:var(--gold);transition:transform 0.25s">▼</span>
+      </div>
+      <div class="phase-card-body">
+        <div class="phase-goal"><strong>Cel:</strong> Budowanie Ognia Trawiennego przed Świętami. Powoli wracają tekstury, ale nadal unikamy surowych produktów, nadmiaru nabiału, czosnku i cebuli.</div>
+
+        <div class="tip-box" style="margin-bottom:14px">✅ Wszystko z Fazy 1, PLUS poniższe nowości:</div>
+
+        <div class="food-group">
+          <div class="food-group-title">🍞 Pieczywo – wielki powrót</div>
+          <ul class="food-list">
+            <li>Chleb pszenno-orkiszowy na zakwasie <em>(ALE zawsze opieczony w tosterze/na patelni i grubo posmarowany masłem/Ghee/oliwą)</em></li>
+          </ul>
+        </div>
+
+        <div class="food-group">
+          <div class="food-group-title">🍘 Chrupiące dodatki</div>
+          <ul class="food-list">
+            <li>Wafle ryżowe / z komosy <em>(nigdy na sucho! zawsze z pastą, masłem lub awokado)</em></li>
+            <li>Gofry z mąki jaglanej/kokosowej/ziemniaczanej <em>(z ciepłym musem lub jajkiem)</em></li>
+          </ul>
+        </div>
+
+        <div class="food-group">
+          <div class="food-group-title">🥦 Więcej warzyw i owoców</div>
+          <ul class="food-list">
+            <li>Cukinia <em>(duszona, pieczona)</em></li>
+            <li>Zielona fasolka, szpinak <em>(blanszowane/duszone na Ghee)</em></li>
+            <li>Owoce jagodowe: borówki, maliny <em>(w temperaturze pokojowej lub lekko podgrzane z owsianką)</em></li>
+            <li>Zgnieciony, dojrzały banan</li>
+          </ul>
+        </div>
+
+        <div class="food-group">
+          <div class="food-group-title">🐟 Białko – rozszerzenie</div>
+          <ul class="food-list">
+            <li>Ryby pieczone w piekarniku lub na parze</li>
+            <li>Tofu <em>(podsmażone lub ugotowane w zupie – nie z paczki wprost)</em></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAZA 3 -->
+    <div class="phase-card">
+      <div class="phase-card-header" onclick="togglePhase(this)">
+        <div>
+          <div class="phase-title">🌱 Faza 3 – Noworodek</div>
+          <div class="phase-desc">Po 7-dniowym poście Congee / Kitchari</div>
+        </div>
+        <span class="chevron" style="font-size:1.1rem;color:var(--gold);transition:transform 0.25s">▼</span>
+      </div>
+      <div class="phase-card-body">
+        <div class="phase-goal"><strong>Cel:</strong> Delikatne wybudzanie krystalicznie czystego żołądka po poście. Twój żołądek będzie wtedy silny, ale bardzo wrażliwy na szok. Każdy nowy produkt – jeden na raz.</div>
+
+        <table class="post-table">
+          <tr><th>Dzień po poście</th><th>Co jeść</th></tr>
+          <tr>
+            <td><strong>Dzień 1–2</strong></td>
+            <td>Dalej półpłynnie. Lekkie zupy jarzynowe (bez mięsa), gotowana marchew i cukinia, bardzo rzadkie kasze (jaglana, ryż). Dużo ciepłej wody. Zero surowego.</td>
+          </tr>
+          <tr>
+            <td><strong>Dzień 3–4</strong></td>
+            <td>Wprowadzamy białko i dobre tłuszcze. Miękkie jajka w koszulce, odrobina gotowanego na parze białego mięsa lub chudej ryby. Więcej masła Ghee.</td>
+          </tr>
+          <tr>
+            <td><strong>Dzień 5+</strong></td>
+            <td>Powrót do „Złotego Środka". Powoli wraca opieczony chleb orkiszowy, delikatne surowe dodatki (np. kilka listków sałaty z oliwą do ciepłego posiłku).</td>
+          </tr>
+        </table>
+
+        <div class="golden-rule">
+          <strong>⚠️ Złota zasada po poście</strong>
+          Przez pierwszy tydzień absolutnie unikaj: cukru (nawet syropu klonowego), zimnego nabiału (jogurtów z lodówki) i smażenia w głębokim tłuszczu. Ciało musi powoli nauczyć się znów radzić sobie z cięższymi zadaniami.
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<nav class="bottom-nav">
+  <button class="active" onclick="showPage('recipes', this)"><span class="icon">🍲</span>Przepisy</button>
+  <button onclick="showPage('protocol', this)"><span class="icon">📋</span>Protokół</button>
+  <button onclick="showPage('fazy', this)"><span class="icon">🌿</span>Fazy</button>
+  <button onclick="showPage('dekalog', this)"><span class="icon">✨</span>Zasady</button>
+</nav>
+
+<script>
+const RECIPES = [
+  {
+    num: 1, chapter: 'congee',
+    title: 'Ratunkowe Congee – Kleik Leczniczy',
+    subtitle: 'Medyczny kleik ryżowy. Pogromca wzdęć i mgły mózgowej.',
+    tags: ['Thermomix', 'Garnek', 'Post'],
+    ingredients: [
+      '100 g białego ryżu (krótkoziarnisty, jaśminowy lub risotto – dokładnie przepłukany)',
+      '900–1000 g wody',
+      '4 cienkie plastry świeżego imbiru',
+      '1 łyżeczka nasion kopru włoskiego LUB 3 rozgniecione ziarna zielonego kardamonu',
+      'Kawałek suszonej ekologicznej skórki pomarańczy/mandarynki',
+      'Szczypta soli'
+    ],
+    tm: [
+      'Przepłucz ryż dokładnie na sitku pod bieżącą wodą aż do czystości.',
+      'Do naczynia: ryż, imbir, koper/kardamon, skórkę pomarańczy i sól. Wlej 1000 g wody.',
+      'Zamiast miarki, na pokrywie postaw koszyczek (pozwoli parze uchodzić).',
+      'Ustawienia: 45 min / 98°C / Obroty Wsteczne / Prędkość 1.',
+      'Sprawdź – jeśli ryż rozpadł się całkowicie, Congee gotowe. Jeśli wolisz gładsze: +15 min / 98°C / Obroty Wsteczne / Prędkość 1.',
+      'Wyłów plastry imbiru i skórkę. Congee powinno być jak gęsty kremowy kisiał.'
+    ],
+    garnek: [
+      'Przepłucz 100 g ryżu dokładnie.',
+      'Wrzuć do garnka z 8–10 szklankami wody, imbirem, koprem i solą.',
+      'Doprowadź do wrzenia, zmniejsz ogień do absolutnego minimum.',
+      'Gotuj pod lekko uchylonym przykryciem 2–4 godziny, aż ryż się rozpadnie i powstanie gęsty kleik.',
+      'Można ugotować podwójną porcję i przechowywać w lodówce 2–3 dni. Zawsze odgrzewaj w garnku z odrobiną gorącej wody.'
+    ],
+    props: ['Imbir: rozpala ogień trawienny, rusza zastaną energię', 'Koper włoski: pogromca wzdęć i gazów', 'Skórka pomarańczy (Chenpi): rozprasza mgłę mózgową i śluz', 'Ryż biały: łatwo strawny, nie obciąża Śledziony']
+  },
+  {
+    num: 2, chapter: 'congee',
+    title: 'Congee z Fasolką Mung',
+    subtitle: 'Dzień 3 postu. Detoksykujące, bezpieczne wprowadzenie białka.',
+    tags: ['Thermomix', 'Garnek', 'Post – Dzień 3'],
+    ingredients: [
+      '70 g ryżu białego (okrągłego lub jaśminowego)',
+      '30 g fasolki mung (najlepiej żółta łuskana – Mung Dal)',
+      '700 g wody',
+      '1 plaster świeżego imbiru',
+      '½ łyżeczki kuminu (mielonego lub nasion)',
+      'Szczypta soli'
+    ],
+    tm: [
+      'Przepłucz ryż i fasolkę mung osobno.',
+      'Jeśli zielona fasolka mung (niełuskana): namocz co najmniej 12 godzin przed gotowaniem.',
+      'Do naczynia: ryż, fasolka mung, imbir, kumin, sól i woda.',
+      'Zamiast miarki, na pokrywie postaw koszyczek.',
+      'Ustawienia: 60 min / 98°C / Obroty Wsteczne / Prędkość 1.',
+      'Fasolka musi być miękka jak masło – całkowicie rozgotowana.'
+    ],
+    garnek: [
+      'Przepłucz ryż i fasolkę mung.',
+      'Wrzuć do garnka z wodą, imbirem, kuminem i solą.',
+      'Doprowadź do wrzenia, zmniejsz ogień do minimum.',
+      'Gotuj pod lekko uchyloną przykrywką 90–120 minut, aż ryż i fasolka całkowicie się rozpadną.',
+      'Mieszaj od czasu do czasu.'
+    ],
+    tip: 'Jeśli po tej porcji poczujesz twardy brzuch lub gazy – wróć do czystego Congee z imbirem. To znak, że Śledziona potrzebuje jeszcze czasu.',
+    props: ['Proporcja 7:3 (ryż:fasolka) – bezpieczna w trakcie detoksykacji', 'Fasolka mung: silnie detoksykuje, usuwa Gorąco i stany zapalne', 'Kumin: neutralizuje gazotwórcze właściwości strączków']
+  },
+  {
+    num: 3, chapter: 'kasze',
+    title: 'Rozgrzewająca Jaglanka z Jabłkiem',
+    subtitle: 'Idealna na śniadanie. Osusza śluz, walczy z mgłą mózgową.',
+    tags: ['Thermomix', 'Garnek', 'Śniadanie'],
+    ingredients: [
+      '100 g kaszy jaglanej (wypłukanej wrzątkiem)',
+      '400 g wody',
+      '1 jabłko (w kawałkach lub ćwiartkach)',
+      '½ łyżeczki cynamonu mielonego',
+      'Szczypta imbiru świeżego posiekanego LUB ¼ łyżeczki sproszkowanego'
+    ],
+    tm: [
+      'Płukanie kaszy: wsyp do koszyczka i płucz pod bardzo gorącą wodą, aż woda przestanie być mętna. To usuwa goryczkę.',
+      'Do naczynia: przepłukana jaglanka, woda, jabłko, cynamon i imbir.',
+      'Ustawienia: 15 min / 100°C / Prędkość 1.',
+      'Po sygnale zostaw w zamkniętym naczyniu na 5 minut. Kasza dojdzie i będzie puszysta.'
+    ],
+    garnek: [
+      'Wypłucz kaszę pod gorącą wodą.',
+      'Wrzuć kaszę, jabłko, cynamon i imbir do garnka. Dodaj wodę.',
+      'Gotuj pod przykryciem na małym ogniu ok. 20–30 minut, aż jaglanka i jabłko będą miękkie.',
+      'Wymieszaj łyżką. Kasza powinna być krusząca, ale nie sucha.'
+    ],
+    props: ['Jaglanka: osusza śluz, reguluje Śledzionę, ciepła natura', 'Jabłko ugotowane: nawilża, buduje płyny Yin, nie tworzy śluzu', 'Cynamon: rozgrzewa, reguluje krążenie energii']
+  },
+  {
+    num: 4, chapter: 'kasze',
+    title: 'Kasza Jaglana z Quinoą na Sypko',
+    subtitle: 'Wersja w koszyczku TM. Idealna baza do dań z oliwą lub warzywami.',
+    tags: ['Thermomix', 'Garnek', 'Obiad'],
+    ingredients: [
+      '50 g kaszy jaglanej',
+      '50 g quinoa (biała)',
+      '400 g wody',
+      'Szczypta soli',
+      'Opcjonalnie: ½ łyżeczki masła Ghee lub oleju kokosowego'
+    ],
+    tm: [
+      'Płukanie: wsyp kaszę i quinoę do koszyczka. Płucz pod gorącą wodą, aż woda będzie czysta. Na koniec przelej wrzątkiem z czajnika.',
+      'Do naczynia wlej wodę i dodaj sól. Włóż koszyczek z ziarnami.',
+      'Ustawienia: 18 min / 100°C / Prędkość 4.',
+      'Po ugotowaniu zostaw koszyczek w zamkniętym naczyniu na 5 minut. Kasza dojdzie i będzie puszysta.',
+      'Wskazówka: do wody w naczyniu wrzuć 2 plastry świeżego imbiru – para nada kaszy właściwości rozgrzewające.'
+    ],
+    garnek: [
+      'Przepłucz kaszę i quinoę w sitku pod gorącą wodą.',
+      'Wrzuć do garnka, dodaj wodę i sól.',
+      'Gotuj pod przykryciem na małym ogniu ok. 20–25 minut, aż woda wchłonięta.',
+      'Pozwól odpocząć 5 minut bez mieszania.'
+    ],
+    props: ['Jaglanka: sucha natura, osusza śluz, rozgrzewa', 'Quinoa: kompletne białko, łatwe do przyswojenia']
+  },
+  {
+    num: 5, chapter: 'kasze',
+    title: 'Mokra Jaglanka z Quinoą i Warzywami',
+    subtitle: 'Wszystko w jednym naczyniu. Konsystencja mokra – łatwiejsza do trawienia.',
+    tags: ['Thermomix', 'Garnek', 'Obiad'],
+    ingredients: [
+      '50 g kaszy jaglanej',
+      '50 g quinoa',
+      '1 mała marchewka (pokrojona w kostkę)',
+      '1 plaster korzenia selera LUB kawałek pietruszki (w kostce)',
+      '450–500 g wody',
+      '1 plasterek świeżego imbiru (drobno posiekany)',
+      '½ łyżeczki kuminu LUB mielonego kopru włoskiego',
+      'Szczypta soli',
+      'Odrobina Ghee lub oliwy na koniec'
+    ],
+    tm: [
+      'Płukanie: kaszę i quinoę wsyp do koszyczka, płucz pod bardzo gorącą wodą aż przestanie lecieć mętna woda.',
+      'Do naczynia wrzuć marchewkę i seler/pietruszkę. Rozdrobnij: 5 sek / Prędkość 5.',
+      'Dodaj wypłukane ziarno do naczynia z warzywami. Wlej wodę, dodaj imbir, kumin i sól.',
+      'Ustawienia: 18–20 min / 100°C / Obroty Wsteczne / Prędkość 1.',
+      'Po ugotowaniu pozostaw naczynie zamknięte na 5–10 minut.',
+      'Dolej odrobinę Ghee lub oliwy. Wymieszaj delikatnie.'
+    ],
+    garnek: [
+      'Przepłucz kaszę i quinoę w sitku.',
+      'Pokrój warzywa drobno.',
+      'Wrzuć wszystko do garnka: warzywa, ziarna, wodę, imbir, kumin, sól.',
+      'Gotuj pod przykryciem na małym ogniu ok. 25–30 minut.',
+      'Pozwól odpocząć 5 minut bez mieszania. Dolej Ghee lub oliwę.'
+    ],
+    tip: 'Na mgłę mózgową: dodaj szczyptę kurkumy do gotowania – w połączeniu z imbirem pomaga rozbić zastoje wilgoci w głowie.',
+    props: ['Imbir i Kumin: pracują nad gazami podczas jedzenia', 'Marchewka: harmonizuje środek, bezpieczna dla wrażliwych jelit', 'Quinoa w mokrej formie: bardzo łatwo przyswajalna']
+  },
+  {
+    num: 6, chapter: 'kasze',
+    title: 'Duszone Warzywa z Quinoą',
+    subtitle: 'Warzywa duszone na parze + quinoa w koszyczku TM. Lekka kolacja.',
+    tags: ['Thermomix', 'Garnek / Parnik', 'Kolacja'],
+    ingredients: [
+      '50 g quinoa (biała)',
+      '200 g cukinii (małe kawałki)',
+      '200 g marchwi (małe kawałki)',
+      '500 g wody',
+      'Szczypta soli',
+      'Odrobina oliwy z oliwek (na koniec)'
+    ],
+    tm: [
+      'Płukanie quinoi: wsyp do koszyczka, płucz pod gorącą wodą aż czysta (usuwa saponiny).',
+      'Do naczynia wrzuć pokrojone warzywa. Rozdrobnij lekko: 4 sek / Prędkość 4. Wlej wodę i dodaj sól.',
+      'Włóż koszyczek z quinoą do środka naczynia (warzywa na dole, quinoa dusi się na parze).',
+      'Ustawienia: 15–18 min / Varoma / Prędkość 2.',
+      'Wyjmij koszyczek z quinoą. Wymieszaj ziarno z warzywami. Dodaj oliwę.'
+    ],
+    garnek: [
+      'Wypłucz quinoę.',
+      'Zagotuj wodę w garnku. Warzywa umieść w parowarze lub sitku nad garnkiem.',
+      'Osobno ugotuj quinoę na sypko: 1 szklanka quinoi + 2 szklanki wody, 15 minut na małym ogniu.',
+      'Połącz quinoę z warzywami, dodaj oliwę.'
+    ],
+    props: ['Quinoa: kompletne białko, łatwe do przyswojenia', 'Marchew: harmonizuje środek, buduje krew', 'Cukinia: łagodna, osuszająca']
+  },
+  {
+    num: 7, chapter: 'ryz',
+    title: 'Terapeutyczny Ryż Basmati (na ból gardła)',
+    subtitle: 'Wersja mokra, bezpośrednio w naczyniu. Każde ziarno jak pigułka.',
+    tags: ['Thermomix', 'Garnek', 'Terapeutyczny'],
+    ingredients: [
+      '100 g ryżu basmati (bardzo dokładnie wypłukanego)',
+      '300 g wody',
+      'Szczypta soli',
+      '1 plaster świeżego imbiru',
+      '1–2 ziarna kardamonu (rozgniecione)',
+      'Szczypta kuminu',
+      'Opcjonalnie: 1 łyżeczka masła Ghee (natłuści gardło)'
+    ],
+    tm: [
+      'Wlej wodę do naczynia. Dodaj imbir, kardamon, kumin i sól. Postaw koszyczek na pokrywie.',
+      'Ustawienia: 5 min / 100°C / Prędkość 1. Przyprawy oddają moc do wody.',
+      'Wsyp dokładnie wypłukany ryż bezpośrednio do wody.',
+      'Ustawienia: 15–18 min / 95°C / Obroty Wsteczne / Prędkość 1.',
+      'Po sygnale zostaw ryż w zamkniętym naczyniu na 5–10 minut. Ryż dojdzie i stanie się puszysty.',
+      'Wyłów imbir i kardamon. Dodaj Ghee – tworzy ochronny film na gardle.'
+    ],
+    garnek: [
+      'Przepłucz ryż dokładnie.',
+      'W garnku: woda, imbir, kardamon, kumin, sól. Gotuj 5 minut.',
+      'Dodaj ryż, zmniejsz ogień do minimum, nakryj.',
+      'Gotuj ok. 20 minut, aż woda wchłonięta i ryż miękki.',
+      'Pozwól odpocząć 5 minut. Wyłów przyprawy.'
+    ],
+    tip: 'Żuj każdy kęs bardzo dokładnie, aż zamieni się w papkę. Ghee natłuści gardło od środka.',
+    props: ['Ryż: energia do walki z wirusem, nie fermentuje w jelitach', 'Kardamon i Imbir: odkażają gardło od środka', 'Ciepło: rozszerza naczynia krwionośne, przyspiesza leczenie']
+  },
+  {
+    num: 8, chapter: 'ryz',
+    title: 'Ryż Basmati z Przyprawami (standardowy)',
+    subtitle: 'Klasyczna wersja codzienna. Gotowany w koszyczku na parze.',
+    tags: ['Thermomix', 'Garnek', 'Obiad / Kolacja'],
+    ingredients: [
+      '100 g ryżu basmati (dokładnie wypłukanego)',
+      '250 g wody',
+      'Szczypta soli',
+      '1 goździk',
+      '1 ziarno kardamonu (rozgniecione)',
+      'Szczypta kuminu'
+    ],
+    tm: [
+      'Płukanie: płucz ryż w koszyczku aż woda krystalicznie czysta (usuwa skrobię, która fermentuje).',
+      'Do naczynia wlej wodę, dodaj sól i przyprawy. Włóż koszyczek z ryżem.',
+      'Ustawienia: 15–18 min / 100°C / Prędkość 4.',
+      'Po sygnale nie wyjmuj ryżu! Zostaw w zamkniętym naczyniu na 5–10 minut. Ziarno musi odsapnąć.'
+    ],
+    garnek: [
+      'Przepłucz ryż dokładnie.',
+      'Wrzuć do garnka z wodą, solą i przyprawami.',
+      'Gotuj pod przykryciem na małym ogniu ok. 18–20 minut, aż woda wchłonięta.',
+      'Pozwól odpocząć 5 minut bez mieszania.'
+    ],
+    tip: 'Serwowanie: z pieczonymi warzywami, jako baza zupy ryżowej, lub na śniadanie z mlekiem owsianym i cynamonem.',
+    props: ['Ryż basmati: łatwy do trawienia, nie sprzyja gazom', 'Kardamon: wspomaga trawienie, rozgrzewa', 'Goździki: odkażające, łagodne działanie aromatyczne']
+  },
+  {
+    num: 9, chapter: 'ryz',
+    title: 'Terapeutyczny Ryż Jednego Garnka',
+    subtitle: 'Szybka wersja. Ryż, ghee i przyprawy w jednym naczyniu.',
+    tags: ['Thermomix', 'Garnek'],
+    ingredients: [
+      '100 g ryżu basmati (wypłukanego)',
+      '300 g wody',
+      '1 łyżeczka masła Ghee',
+      '½ łyżeczki kuminu',
+      '1 plaster imbiru',
+      '½ łyżeczki soli',
+      'Opcjonalnie: kardamon, cynamon do gustu'
+    ],
+    tm: [
+      'Przepłucz ryż dokładnie.',
+      'Do naczynia wrzuć wszystko: ryż, wodę, ghee, przyprawy i sól. Postaw koszyczek na pokrywie.',
+      'Ustawienia: 18–20 min / 95°C / Obroty Wsteczne / Prędkość 1.',
+      'Pozostaw na 5–10 minut w zamkniętym naczyniu. Wyłów plaster imbiru.'
+    ],
+    garnek: [
+      'Przepłucz ryż.',
+      'Do garnka wrzuć wszystkie składniki jednocześnie.',
+      'Gotuj pod przykryciem na małym ogniu ok. 20 minut, aż woda wchłonięta.',
+      'Pozwól odpocząć 5 minut.'
+    ],
+    props: ['Ghee + imbir: wzmacniają działanie terapeutyczne', 'Kumin: neutralizuje gazy', 'Jeden garnek = minimum zmywania']
+  },
+  {
+    num: 10, chapter: 'zupy',
+    title: 'Zupa Dyniowa „Ciepły Kompres"',
+    subtitle: 'Aksamitny krem z dyni hokkaido i marchewki. Działa jak ciepły kompres od środka.',
+    tags: ['Thermomix', 'Garnek', 'Obiad'],
+    ingredients: [
+      '400–500 g dyni hokkaido (ze skórką, bez pestek, pokrojona na kawałki)',
+      '1 marchewka (obrana, pokrojona na grubsze plastry)',
+      '1 czubata łyżka masła Ghee lub oliwy extra virgin',
+      '½ łyżeczki kuminu',
+      '½ łyżeczki suszonego imbiru (lub 2–3 plasterki świeżego)',
+      '½ łyżeczki kurkumy',
+      'Szczypta gałki muszkatołowej (opcjonalnie)',
+      '300–400 g gorącej wody lub lekkiego bulionu',
+      'Sól do smaku'
+    ],
+    tm: [
+      'Aktywacja przypraw: do naczynia włóż Ghee/oliwę i wszystkie przyprawy. Ustawienia: 3 min / 120°C / Prędkość 1. Tłuszcz uwalnia olejki eteryczne z przypraw.',
+      'Dodaj dynię i marchewkę. Ustawienia: 5 sek / Prędkość 5. Zgarnij kopystką warzywa ze ścianek.',
+      'Kąpiel w przyprawach: 3 min / 100°C / Prędkość 1. Warzywa oblepią się złotym tłuszczem.',
+      'Wlej gorącą wodę/bulion (300–400 g). Dodaj sól. Postaw koszyczek na pokrywie. Ustawienia: 15 min / 100°C / Prędkość 1.',
+      'Blendowanie: załóż miarkę. 1 min / Prędkość od 5 do 10 (stopniowo).'
+    ],
+    garnek: [
+      'Rozgrzej Ghee/oliwę na średnim ogniu. Wsyp przyprawy, smaż 1–2 min aż zaczną pachnieć.',
+      'Wrzuć dynię i marchewkę. Mieszaj 2–3 minuty, aż oblepią się przyprawami.',
+      'Wlej gorącą wodę lub bulion (tyle, żeby prawie przykryła warzywa). Dodaj sól.',
+      'Gotuj pod przykryciem na małym ogniu ok. 20–25 minut, aż warzywa miękkie.',
+      'Zmiksuj blenderem ręcznym na krem. Jeśli za gęste – dolej gorącej wody.'
+    ],
+    tip: 'Wlej tylko tyle płynu, żeby prawie przykrył warzywa – dzięki temu krem będzie gęsty i sycący.',
+    props: ['Dynia hokkaido: harmonizuje Śledzionę i Żołądek (TMC), bogata w beta-karoten', 'Marchewka: buduje krew (TMC)', 'Kumin: neutralizuje gazy', 'Imbir: pobudza Ogień Trawienny', 'Kurkuma: przeciwzapalna, oczyszcza krew']
+  },
+  {
+    num: 11, chapter: 'zupy',
+    title: 'Terapeutyczny Krem z Buraka',
+    subtitle: 'Dwie wersje: A – surowe buraki, B – ekspresowa z ugotowanymi.',
+    tags: ['Thermomix', 'Garnek', 'Obiad / Kolacja'],
+    ingredients: [
+      '300–400 g buraków (surowych lub ugotowanych)',
+      '1 jabłko (obrane)',
+      'Resztki pieczonej marchwi i pietruszki (jeśli masz)',
+      '500–600 g jarskiego bulionu (lub wody)',
+      '1 czubata łyżeczka masła Ghee',
+      '1 plaster świeżego imbiru',
+      '½ łyżeczki kminu rzymskiego',
+      'Szczypta kardamonu',
+      'Kilka kropel soku z cytryny i sól (do smaku)'
+    ],
+    tm: [
+      'WERSJA A (surowe buraki): Do naczynia: surowe buraki, jabłko i imbir. Rozdrobnij: 5 sek / Prędkość 5. Zgarnij kopystką.',
+      'Dodaj Ghee, kmin i kardamon. Ustawienia: 3 min / 100°C / Prędkość 1.',
+      'Wlej bulion. Ustawienia: 20 min / 100°C / Prędkość 1. Na ostatnie 5 min wrzuć pieczone warzywa.',
+      'Miksowanie: 1 min / obroty od 5 do 10 (stopniowo). Sprawdź gęstość i smak.',
+      'WERSJA B (ugotowane buraki): Jabłko + imbir, rozdrobnij 5 sek / Prędkość 5. Dodaj Ghee i przyprawy, podduś 3 min / 100°C / Prędkość 1.',
+      'Wrzuć ugotowane buraki i warzywa. Wlej ciepły bulion. Podgrzej: 8 min / 90°C / Prędkość 1. Zmiksuj.'
+    ],
+    garnek: [
+      'WERSJA A: Pokrój buraki i jabłko. Do garnka: buraki, jabłko, imbir, kumin, kardamon, ghee. Podduś 3 min.',
+      'Dolej bulion, gotuj 25–30 min aż buraki miękkie. Dodaj pieczone warzywa na ostatnie 5 min.',
+      'Zmiksuj blenderem na gładko. Dopraw cytryną i solą.',
+      'WERSJA B: Podduś jabłko z przyprawami i ghee 2–3 min. Dodaj ugotowane buraki + bulion. Gotuj 10 min. Zmiksuj.'
+    ],
+    tip: 'Resztki przechowuj w lodówce do 3 dni. Przed podaniem dolej wrzątku i podgrzej na kuchence.',
+    props: ['Buraki: budują krew, wspierają detoksykację wątroby', 'Jabłko: nawilża, buduje Yin', 'Tymianek z pieczonych warzyw: usuwa flegmę, łagodzi ból gardła', 'Ghee: naoliwia gardło, ułatwia przełykanie']
+  },
+  {
+    num: 12, chapter: 'zupy',
+    title: 'Zupa Krem z Brokuła',
+    subtitle: '„Bezpieczny Brokuł" – zmiksowany, 70% łatwiejszy do trawienia niż całe różyczki.',
+    tags: ['Thermomix', 'Garnek'],
+    ingredients: [
+      '250–300 g różyczek brokuła',
+      '2–3 plastry świeżego imbiru',
+      '½ łyżeczki kuminu',
+      'Szczypta asafetydy (hing) – opcjonalnie',
+      '400 g wody lub lekkiego jarskiego bulionu',
+      '1 łyżeczka oliwy z oliwek (na koniec)',
+      'Szczypta soli'
+    ],
+    tm: [
+      'Brokuł podziel na różyczki. Usuń twardą skórę z łodygi.',
+      'Do naczynia: brokuł, imbir, kumin, asafetyda, sól. Wlej wodę lub bulion. Postaw koszyczek.',
+      'Ustawienia: 15 min / 100°C / Prędkość 1.',
+      'Miksowanie: 30 sek / Prędkość 10. Dolej oliwę i wymieszaj.'
+    ],
+    garnek: [
+      'Różyczki brokuła do garnka. Dodaj imbir, kumin, asafetydę i sól.',
+      'Zalej wodą lub bulionem.',
+      'Gotuj pod przykryciem ok. 15–20 minut, aż brokuł całkowicie miękki.',
+      'Zmiksuj blenderem na gładko. Dolej oliwę.'
+    ],
+    warning: 'Jeśli po zupie z brokuła poczujesz powrót gazów – odstaw go całkowicie do czasu zakończenia postu. Jedz wyłącznie w formie zmiksowanej, nigdy jako całe różyczki.',
+    props: ['Brokuł: witaminy, minerały, wspomaga czystość organizmu', 'Imbir: rozpala piec, wspomaga trawienie', 'Kumin: neutralizuje gazy', 'Asafetyda: legendarna na gazy i czyszczenie']
+  },
+  {
+    num: 13, chapter: 'warzywa',
+    title: 'Pieczona Marchew i Pietruszka',
+    subtitle: 'Proste warzywa pieczone na ghee. Idealne z ryżem lub jako baza do zup.',
+    tags: ['Piekarnik', 'Garnek'],
+    ingredients: [
+      '300–400 g marchwi (plastry lub ćwiartki)',
+      '200 g pietruszki korzeniowej (kawałki)',
+      '1 łyżka masła Ghee (roztopionego) lub oliwy',
+      'Szczypta soli',
+      '½ łyżeczki cynamonu',
+      'Szczypta kardamonu',
+      'Opcjonalnie: ½ łyżeczki kuminu, tymianek'
+    ],
+    tm: [
+      'Warzywa ułóż na blasze z papierem do pieczenia.',
+      'Skrop roztopionym ghee. Posyp solą, cynamonem, kardamonem i kuminem. Wymieszaj.',
+      'Piecz w 180°C przez 25–30 minut, aż miękkie i lekko skarmelizowane na krawędziach.',
+      'Wymieszaj co 10 minut.'
+    ],
+    garnek: [
+      'Pokrój warzywa na kawałki.',
+      'Na patelni roztop ghee, dodaj warzywa.',
+      'Posyp przyprawami i solą.',
+      'Dusz na małym ogniu pod przykryciem ok. 20–25 minut, mieszając co jakiś czas.'
+    ],
+    tip: 'Serwuj z ryżem basmati, jako dodatek do zup lub mieszając z kaszą jaglaną.',
+    props: ['Marchew: harmonizuje środek, buduje krew', 'Pietruszka: wspomaga trawienie', 'Cynamon: rozgrzewa, wspomaga krążenie', 'Kardamon: wspomaga trawienie']
+  },
+  {
+    num: 14, chapter: 'warzywa',
+    title: 'Odgrzewanie Kaszy z Warzywami',
+    subtitle: 'Jak prawidłowo podgrzać posiłki zachowując energię Qi. Nigdy mikrofala!',
+    tags: ['Thermomix', 'Garnek (preferowany)'],
+    ingredients: [
+      '30–50 g wody (gorącej lub w temperaturze pokojowej)',
+      '1 porcja (ok. 150–200 g) kaszy z warzywami (z lodówki)',
+      '¼–½ łyżeczki masła Ghee',
+      'Kawałek świeżego imbiru (drobno posiekany)',
+      'Szczypta soli',
+      'Opcjonalnie: szczypiorek, czarny pieprz'
+    ],
+    tm: [
+      'Wyjmij kaszę z lodówki. Świeży imbir posiekaj drobno.',
+      'Do naczynia: kasza, woda (30 g), ghee i imbir. Postaw koszyczek na pokrywie.',
+      'Ustawienia: 5 min / 90°C / Obroty Wsteczne / Prędkość 1.',
+      'Sprawdź konsystencję. Dodaj sól i szczypiorek. Wymieszaj delikatnie.'
+    ],
+    garnek: [
+      'Do małego garnuszka wrzuć kaszę z warzywami.',
+      'Dolej 30–50 g wody. Dodaj ghee.',
+      'Podgrzewaj na bardzo małym ogniu, mieszając, aż odzyska oryginalną konsystencję.',
+      'Nie pozwalaj żeby wrzała – niszczy energię Qi.',
+      'Dodaj świeży imbir, sól i szczypiorek na koniec.'
+    ],
+    tip: '5 zasad TMC: (1) Nigdy mikrofala, (2) Zawsze garnek, (3) Dolej wody – kasza zgęstnieje w lodówce, (4) Zawsze świeży imbir – naprawia zmęczone jedzenie, (5) Dodaj szczypiorek – uruchamia stagnacyjne Qi.',
+    props: ['Imbir: naprawia zmęczenie przechowywanego jedzenia', 'Ghee: przywraca smakowitość', 'Garnek na małym ogniu: zachowuje energię Qi']
+  },
+  {
+    num: 15, chapter: 'napoje',
+    title: 'Złote Mleko',
+    subtitle: 'Terapeutyczny napój na wieczór. Idealne na mgłę mózgową i stany zapalne.',
+    tags: ['Thermomix', 'Garnek', 'Wieczór'],
+    ingredients: [
+      '250 g mleka roślinnego (owsiane lub migdałowe, bez cukru)',
+      '½ łyżeczki kurkumy',
+      'Szczypta świeżego imbiru posiekanego LUB ⅛ łyżeczki sproszkowanego',
+      'Szczypta cynamonu',
+      'Szczypta czarnego pieprzu (piperyna aktywuje kurkumę!)',
+      '1 ziarno kardamonu (rozgniecione)',
+      'Opcjonalnie: ½ łyżeczki masła Ghee'
+    ],
+    tm: [
+      'Do naczynia wlej mleko roślinne.',
+      'Dodaj kurkumę, imbir, cynamon, pieprz, kardamon i opcjonalnie ghee.',
+      'Postaw koszyczek na pokrywie. Ustawienia: 5 min / 80°C / Prędkość 2.',
+      'Przelej przez sito do kubka. Pij na ciepło, małymi łykami.'
+    ],
+    garnek: [
+      'Do małego garnuszka wlej mleko.',
+      'Dodaj wszystkie przyprawy.',
+      'Gotuj na małym ogniu 5–7 minut, aż gorące ale nie wrzące. Mieszaj.',
+      'Przelej przez sito do kubka.'
+    ],
+    warning: 'UWAGA AJURWEDA: Nigdy nie dodawaj miodu do gorącego mleka (powyżej 40°C)! To tworzy „Amę" (toksyny). Jeśli chcesz słodzić – poczekaj aż przestanie parzyć i dodaj wtedy.',
+    props: ['Kurkuma: silnie przeciwzapalna, wspiera czystość umysłu', 'Czarny pieprz: piperyna aktywuje kurkumę', 'Imbir: wspomaga trawienie, rozgrzewa', 'Kardamon: wspomaga trawienie']
+  },
+  {
+    num: 16, chapter: 'napoje',
+    title: 'Złota Woda',
+    subtitle: 'Wersja bez mleka. Silnie przeciwzapalna, pomaga odkrztuszać flegmę.',
+    tags: ['Thermomix', 'Ręcznie'],
+    ingredients: [
+      '250 ml gorącej wody (świeżo zagotowanej)',
+      '½ łyżeczki kurkumy',
+      'Szczypta świeżego imbiru posiekanego LUB ⅛ łyżeczki sproszkowanego',
+      'Szczypta cynamonu',
+      'Szczypta czarnego pieprzu',
+      '1 ziarno kardamonu (rozgniecione)'
+    ],
+    tm: [
+      'Do naczynia wlej wrzącą wodę.',
+      'Dodaj wszystkie przyprawy.',
+      'Ustawienia: 3 min / 100°C / Prędkość 2.'
+    ],
+    garnek: [
+      'Do kubka wrzuć wszystkie przyprawy.',
+      'Zalej wrzącą wodą. Wymieszaj dobrze.',
+      'Pozostaw 2–3 minuty, aby przyprawy się rozpuściły.',
+      'Przelej przez sito (opcjonalnie). Pij na ciepło, małymi łykami.'
+    ],
+    props: ['Kurkuma: przeciwzapalna, wspiera czystość', 'Imbir: wspomaga trawienie, rozgrzewa', 'Czarny pieprz: aktywuje kurkumę']
+  },
+  {
+    num: 17, chapter: 'napoje',
+    title: 'Herbata Trawienia',
+    subtitle: 'Na wzdęcia i mgłę po ciężkim posiłku. Pij natychmiast po „przewinieniu".',
+    tags: ['Thermomix', 'Ręcznie'],
+    ingredients: [
+      '2–3 plastry świeżego imbiru (cienkie)',
+      '½ łyżeczki nasion kopru włoskiego LUB ½ łyżeczki kuminu',
+      'Szczypta kardamonu (opcjonalnie)',
+      '250 ml wrzącą wody'
+    ],
+    tm: [
+      'Do naczynia wlej wrzącą wodę.',
+      'Dodaj imbir, koper/kumin i kardamon.',
+      'Ustawienia: 5 min / 100°C / Prędkość 1.',
+      'Przelej przez sito do kubka.'
+    ],
+    garnek: [
+      'Do kubka wrzuć imbir i nasiona kopru/kuminu.',
+      'Dodaj kardamon (jeśli chcesz).',
+      'Zalej wrzącą wodą. Nakryj i zostaw 5–7 minut.',
+      'Przelej przez sito. Pij na ciepło, małymi łykami.'
+    ],
+    tip: 'Po herbacie idź na 15-minutowy spacer – ruch pomaga jelitom przesuwać treść pokarmową.',
+    props: ['Imbir: rozpala ogień trawienny', 'Koper włoski: rozprasza gazy i wzdęcia', 'Kardamon: neutralizuje śluzotwórcze działanie glutenu']
+  },
+  {
+    num: 18, chapter: 'napoje',
+    title: 'Mleko Jaglane',
+    subtitle: 'Na głód o późnej porze (21:00). Gęsty sycący napój zamiast jedzenia.',
+    tags: ['Thermomix', 'Blender ręczny'],
+    ingredients: [
+      '2–3 łyżki ugotowanej jaglanki (czystej lub z warzywami)',
+      '1 filiżanka (ok. 250 ml) gorącej wody',
+      'Szczypta cynamonu',
+      'Opcjonalnie: szczypta kardamonu'
+    ],
+    tm: [
+      'Do naczynia wrzuć gotowaną jaglankę.',
+      'Dolej gorącą wodę. Dodaj cynamon i kardamon.',
+      'Postaw koszyczek na pokrywie.',
+      'Ustawienia: 30 sek / Prędkość 10. Aż do uzyskania gęstego jedwabistego naparu.'
+    ],
+    garnek: [
+      'Do naczynia wrzuć gotowaną jaglankę i gorącą wodę.',
+      'Miksuj blenderem ręcznym 30–60 sekund, aż gęste i jednolite.',
+      'Dodaj cynamon. Pij z łyżką jako zupę lub z kubka jako napój.'
+    ],
+    tip: 'Alternatywy na głód o 21:00: kilka łyków kompotu z pieczonego jabłka, 3–5 namoczonych migdałów żutych powoli, szklanka herbaty Rooibos.',
+    props: ['Jaglanka: ciepła natura, osusza śluz', 'Cynamon: reguluje krążenie energii, uspokaja', 'Kardamon: wspomaga trawienie, łagodny']
+  },
+  {
+    num: 19, chapter: 'desery',
+    title: 'Kakao Mocy – Kakao Ceremonialne',
+    subtitle: 'Bez rewolucji w brzuchu. Rano lub w południe – nigdy wieczorem.',
+    tags: ['Thermomix', 'Garnek', 'Rano / Południe'],
+    ingredients: [
+      '1–2 łyżki kakao ceremonialnego (surowego, dobrej jakości)',
+      '250 ml mleka roślinnego (owsiane lub migdałowe, bez cukru)',
+      'Szczypta soli (podkręca słodycz bez cukru)',
+      '½ łyżeczki kardamonu',
+      '½ łyżeczki cynamonu',
+      'SŁODZENIE (wybierz): 1–2 daktyle LUB odrobina miodu (dodaj gdy ostygnie) LUB bez słodzenia'
+    ],
+    tm: [
+      'Jeśli używasz daktyli: wrzuć je do kielicha, miksuj: 10 sek / Prędkość 10 (na sucho).',
+      'Dodaj mleko roślinne, kakao, szczyptę soli, kardamon i cynamon.',
+      'Ustawienia: 3 min / 70°C / Prędkość 3.',
+      'Następnie: 20 sek / Prędkość 8 – powstanie pianka.',
+      'Przelej do kubka. Jeśli słodzisz miodem – dodaj teraz, gdy nieco ostygnie.'
+    ],
+    garnek: [
+      'Jeśli używasz daktyli: zblenduj je z 2–3 łyżkami mleka na gładką pastę.',
+      'W rondelku podgrzej mleko roślinne na małym ogniu (nie gotuj).',
+      'Dodaj kakao, pastę daktylową i wszystkie przyprawy.',
+      'Mieszaj trzepaczką lub spień spieniaczem.',
+      'Jeśli słodzisz miodem – dodaj teraz po zdjęciu z ognia.'
+    ],
+    warning: 'NIE pij wieczorem – teobromina i kofeina zakłócają sen. NIE używaj mleka kokosowego jako bazy – zbyt tłuste. NIE dodawaj miodu do gorącego kakao – tworzy Amę (toksyny).',
+    props: ['Kakao ceremonialne: wspiera jasność umysłu, bogaty w magnez', 'Kardamon: usuwa mgłę mózgową, czyni kakao lżejszym dla żołądka', 'Cynamon: stabilizuje poziom cukru', 'Daktyle: budują krew (TMC) bez tworzenia śluzu']
+  },
+  {
+    num: 20, chapter: 'desery',
+    title: 'Pieczone Jabłka „Ratunkowe"',
+    subtitle: 'Najłatwiejszy deser. Na głód wieczorny, na słodkie zachcianki.',
+    tags: ['Piekarnik', 'Thermomix'],
+    ingredients: [
+      '2–3 jabłka (najlepiej kwaskowate: szara reneta lub antonówka)',
+      '1 łyżeczka masła Ghee (lub oleju kokosowego)',
+      '1 łyżeczka cynamonu',
+      'Szczypta kardamonu',
+      'Szczypta soli (podkręca słodycz)',
+      'Opcjonalnie: 2–3 daktyle (posiekane drobno, zamiast cukru)'
+    ],
+    tm: [
+      'Jabłka umyj. Usuń gniazda nasienne łyżeczką (stwórz miseczki, nie przekrawaj do końca).',
+      'Do każdej miseczki włóż: kawałeczek ghee, posiekany daktyl (jeśli używasz), cynamon, kardamon i szczyptę soli.',
+      'Wstaw do nagrzanego piekarnika 180°C na 25–30 minut, aż jabłka będą miękkie i lekko skarmelizowane.',
+      'Podawaj ciepłe. Sok, który wypłynął – to naturalny kompot, wypij go!'
+    ],
+    garnek: [
+      'Jabłka pokrój na ćwiartki. Usuń gniazda nasienne.',
+      'Do małego garnka wrzuć jabłka, dodaj ghee, cynamon, kardamon, sól.',
+      'Dodaj 2–3 łyżki wody.',
+      'Dusz pod przykryciem na małym ogniu ok. 15–20 minut, aż jabłka zupełnie miękkie.',
+      'Można zjeść łyżką jako mus.'
+    ],
+    tip: 'Na wieczorny głód: zjedz ½ jabłka (nie całe – żeby nie obciążać trawienia przed snem). Kompot ze skarmelizowanego soku to dodatkowy bonus!',
+    props: ['Jabłko gotowane/pieczone: nawilża, buduje Yin, absolutnie bezpieczne', 'Cynamon: stabilizuje poziom cukru, rozgrzewa', 'Daktyle: słodycz błonnikowa bez fermentacji w jelitach']
+  },
+  {
+    num: 21, chapter: 'bazy',
+    title: 'Ziołowa Oliwa',
+    subtitle: 'Aromatyczna baza. Zioła w tłuszczu są najlepiej przyswajalne. Raz zrobiona starczy na 2–3 tygodnie.',
+    tags: ['Thermomix', 'Garnek'],
+    ingredients: [
+      '100 g oliwy z oliwek (extra virgin)',
+      '1 łyżeczka nasion kuminu (rzymskiego)',
+      'Szczypta asafetydy (hing) – jeśli masz',
+      '1 plaster świeżego imbiru',
+      '1 łyżeczka majeranku (świeżego lub suszonego)'
+    ],
+    tm: [
+      'Do naczynia wlej oliwę.',
+      'Dodaj kmin, asafetydę, imbir i majeranek. Zamiast miarki postaw koszyczek.',
+      'Ustawienia: 5 min / 80°C / Prędkość 1.',
+      'Przelej do słoiczka. Przechowuj w temperaturze pokojowej do 2–3 tygodni.'
+    ],
+    garnek: [
+      'Do małego rondelka wlej oliwę.',
+      'Dodaj wszystkie składniki.',
+      'Podgrzewaj na bardzo małym ogniu ok. 5 minut, aż aromatyczna.',
+      'Unikaj gotowania, by nie zniszczyć delikatnych olejów. Przelej do słoiczka.'
+    ],
+    tip: 'Polewaj każdą porcję kaszy lub quinoi. Dodawaj do zup na koniec (po ugotowaniu). Rozcieńczaj do ryżu.',
+    props: ['Kmin: neutralizuje gazy, wspomaga trawienie', 'Asafetyda (hing): na gazy i fermentację, silnie odkażająca', 'Imbir: rozgrzewa, wspomaga trawienie', 'Tłuszcz: zioła w oliwie są najlepiej przyswajalne']
+  },
+  {
+    num: 22, chapter: 'bazy',
+    title: 'Owsianka ze Śliwkami i Ghee',
+    subtitle: 'Rozgrzewające śniadanie. Śliwki nawilżają jelita i poruszają energię.',
+    tags: ['Thermomix', 'Garnek', 'Śniadanie'],
+    ingredients: [
+      '100 g płatków owsianych (górskich, nie błyskawicznych)',
+      '400 g wody (lub częściowo mleko roślinne)',
+      '3–5 śliwek suszonych (pokrojonych) LUB świeżych',
+      '½ łyżeczki masła Ghee',
+      'Szczypta kardamonu',
+      'Szczypta imbiru (świeżego lub sproszkowanego)',
+      'Szczypta cynamonu'
+    ],
+    tm: [
+      'Do naczynia wlej wodę, wrzuć płatki, śliwki i przyprawy.',
+      'Postaw koszyczek na pokrywie.',
+      'Ustawienia: 10–12 min / 90°C / Obroty Wsteczne / Prędkość 1.',
+      'Po ugotowaniu dodaj Ghee i wymieszaj delikatnie kopystką.'
+    ],
+    garnek: [
+      'Do garnuszka wlej wodę lub mieszankę wody z mlekiem roślinnym.',
+      'Dodaj płatki, śliwki i przyprawy.',
+      'Gotuj na małym ogniu ok. 8–10 minut, mieszając, aż płatki wchłoną płyn i owsianka zgęstnieje.',
+      'Zdejmij z ognia, dodaj Ghee, wymieszaj.'
+    ],
+    props: ['Płatki owsiane: rozgrzewające, budują energię', 'Śliwki suszone: nawilżają jelita (Yin), poruszają zastałą energię (TMC)', 'Ghee: nośnik dla przypraw, wspomaga wchłanianie', 'Kardamon i cynamon: wspomagają trawienie']
+  }
+];
+
+function buildRecipeHTML(r) {
+  const hasTm = r.tm && r.tm.length;
+  const hasGarnek = r.garnek && r.garnek.length;
+  const tmLabel = hasTm ? (r.tm === r.garnek ? 'Instrukcja' : 'Thermomix') : '';
+  const garnekLabel = hasGarnek ? (r.chapter === 'napoje' && r.num >= 16 ? 'Ręcznie' : 'Garnek') : '';
+
+  const tags = r.tags.map(t => {
+    const isTm = t.toLowerCase().includes('thermomix');
+    return `<span class="tag${isTm ? ' tm' : ''}">${t}</span>`;
+  }).join('');
+
+  const ingredients = r.ingredients.map(i => `<li>${i}</li>`).join('');
+  const tmSteps = hasTm ? r.tm.map(s => `<li>${s}</li>`).join('') : '';
+  const garnekSteps = hasGarnek ? r.garnek.map(s => `<li>${s}</li>`).join('') : '';
+  const props = r.props ? r.props.map(p => `<li>${p}</li>`).join('') : '';
+
+  const methodTabsHTML = (hasTm && hasGarnek) ? `
+    <div class="method-tabs">
+      <button class="method-tab active" onclick="switchTab(this, 'tm-${r.num}')">🌀 ${tmLabel}</button>
+      <button class="method-tab" onclick="switchTab(this, 'garnek-${r.num}')">🥘 ${garnekLabel}</button>
+    </div>` : '';
+
+  const tmHTML = hasTm ? `
+    <div id="tm-${r.num}" class="recipe-section method-pane">
+      <p class="section-label">Kroki</p>
+      <ol class="step-list">${tmSteps}</ol>
+    </div>` : '';
+
+  const garnekHTML = hasGarnek ? `
+    <div id="garnek-${r.num}" class="recipe-section method-pane" style="${hasTm ? 'display:none' : ''}">
+      <p class="section-label">Kroki</p>
+      <ol class="step-list">${garnekSteps}</ol>
+    </div>` : '';
+
+  const tipHTML = r.tip ? `<div class="recipe-section"><p class="section-label">Wskazówka</p><div class="tip-box">${r.tip}</div></div>` : '';
+  const warnHTML = r.warning ? `<div class="recipe-section"><p class="section-label">Ważne</p><div class="warning-box">${r.warning}</div></div>` : '';
+  const propsHTML = props ? `<div class="recipe-section"><p class="section-label">Właściwości zdrowotne</p><ul class="prop-list">${props}</ul></div>` : '';
+
+  return `
+  <div class="recipe-card" data-chapter="${r.chapter}" data-search="${r.title.toLowerCase()} ${(r.subtitle||'').toLowerCase()} ${r.tags.join(' ').toLowerCase()}">
+    <div class="recipe-card-header" onclick="toggleCard(this)">
+      <div>
+        <span class="recipe-num">Przepis ${r.num}</span>
+        <div class="recipe-title">${r.title}</div>
+        <div class="recipe-subtitle">${r.subtitle || ''}</div>
+        <div class="recipe-tags">${tags}</div>
+      </div>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="recipe-body">
+      <div class="recipe-section">
+        <p class="section-label">Składniki</p>
+        <ul class="ingredient-list">${ingredients}</ul>
+      </div>
+      ${methodTabsHTML}
+      ${tmHTML}
+      ${garnekHTML}
+      ${tipHTML}
+      ${warnHTML}
+      ${propsHTML}
+    </div>
+  </div>`;
+}
+
+function renderRecipes() {
+  document.getElementById('recipe-list').innerHTML = RECIPES.map(buildRecipeHTML).join('');
+}
+
+function toggleCard(header) {
+  const card = header.parentElement;
+  card.classList.toggle('open');
+}
+
+function switchTab(btn, targetId) {
+  const body = btn.closest('.recipe-body');
+  body.querySelectorAll('.method-tab').forEach(t => t.classList.remove('active'));
+  body.querySelectorAll('.method-pane').forEach(p => p.style.display = 'none');
+  btn.classList.add('active');
+  document.getElementById(targetId).style.display = 'block';
+}
+
+function filterChapter(chapter, btn) {
+  document.querySelectorAll('.chapter-nav button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.recipe-card').forEach(card => {
+    card.classList.toggle('hidden', chapter !== 'all' && card.dataset.chapter !== chapter);
+  });
+  document.getElementById('search-input').value = '';
+}
+
+function filterRecipes() {
+  const q = document.getElementById('search-input').value.toLowerCase();
+  document.querySelectorAll('.recipe-card').forEach(card => {
+    card.classList.toggle('hidden', q.length > 1 && !card.dataset.search.includes(q));
+  });
+  if (q.length > 1) {
+    document.querySelectorAll('.chapter-nav button').forEach(b => b.classList.remove('active'));
+  }
+}
+
+function togglePhase(header) {
+  const card = header.parentElement;
+  card.classList.toggle('open');
+}
+
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.bottom-nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  el.textContent = el.classList.contains('checked') ? '✓' : '';
+}
+
+renderRecipes();
+</script>
+</body>
+</html>
