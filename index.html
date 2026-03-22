@@ -203,6 +203,115 @@
   .bottom-nav button.active { color: var(--brown); }
   .bottom-nav button.active span.icon { filter: drop-shadow(0 0 3px rgba(200,150,62,0.4)); }
   .bottom-nav button span.icon { font-size: 1.4rem; line-height: 1; }
+
+  /* ═══════════════════════════════════════════════
+     RESPONSIVE – TABLET & DESKTOP (≥ 768px)
+  ═══════════════════════════════════════════════ */
+  @media (min-width: 768px) {
+
+    /* ── Header ── */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      padding: 18px 40px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-align: left;
+      z-index: 300;
+    }
+    header h1 { font-size: 1.45rem; margin-bottom: 0; }
+    header p  { font-size: 0.82rem; }
+
+    /* ── Bottom nav → Top secondary nav ── */
+    .bottom-nav {
+      position: fixed;
+      top: 72px;          /* sits right below the fixed header */
+      bottom: auto;
+      left: 0; right: 0;
+      border-top: none;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0;
+      box-shadow: 0 2px 6px rgba(107,66,38,0.09);
+      z-index: 250;
+    }
+    .bnav-track {
+      justify-content: center;
+      overflow-x: visible;
+      padding: 0 24px;
+      gap: 2px;
+    }
+    .bnav-fade { display: none; }
+    .bottom-nav button {
+      min-width: auto;
+      padding: 11px 22px;
+      font-size: 0.84rem;
+      flex-direction: row;
+      gap: 6px;
+      border-radius: 8px 8px 0 0;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+    .bottom-nav button span.icon { font-size: 1.05rem; }
+    .bottom-nav button:hover { color: var(--brown); background: var(--gold-light); }
+    .bottom-nav button.active {
+      color: var(--brown);
+      background: var(--cream);
+      border-bottom-color: var(--gold);
+    }
+    .bottom-nav button.active span.icon { filter: none; }
+
+    /* ── All pages: push content below fixed header + nav ── */
+    .page { padding-top: 124px; }
+
+    /* ── Search bar ── */
+    .search-bar { padding: 14px 32px; }
+    .search-bar input { max-width: 580px; font-size: 1rem; }
+
+    /* ── Chapter nav (recipe filter tabs) ── */
+    .chapter-nav { padding: 0 28px; }
+    .chapter-nav button { font-size: 0.87rem; padding: 12px 18px; }
+
+    /* ── Main content area ── */
+    main { padding: 20px 36px 48px; max-width: 1180px; }
+
+    /* ── Recipe cards: 2-column grid ── */
+    #recipe-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    /* ── Recipe card internals ── */
+    .recipe-card-header { padding: 16px 18px; }
+    .recipe-title { font-size: 1.06rem; }
+    .recipe-section { padding: 16px 18px; }
+
+    /* ── Chapter header ── */
+    .chapter-header { padding: 28px 0 14px; }
+    .chapter-header h2 { font-size: 1.28rem; }
+
+    /* ── Protocol & rules pages ── */
+    .protocol-box { padding: 22px 26px; }
+    .phase-card-header { padding: 16px 20px; }
+    .phase-card-body { padding: 16px 20px; }
+
+    /* ── Wiedza nav ── */
+    .wiedza-nav { padding: 0 28px; }
+    .wiedza-nav button { font-size: 0.86rem; padding: 12px 16px; }
+    .wiedza-section { padding: 20px 36px 24px; }
+  }
+
+  /* ═══════════════════════════════════════════════
+     LARGE DESKTOP (≥ 1120px) — 3-column recipes
+  ═══════════════════════════════════════════════ */
+  @media (min-width: 1120px) {
+    #recipe-list { grid-template-columns: repeat(3, 1fr); }
+    main { max-width: 1380px; }
+    .search-bar input { max-width: 680px; }
+    header h1 { font-size: 1.6rem; }
+  }
 </style>
 </head>
 <body>
