@@ -130,8 +130,51 @@
   .recipe-card.hidden { display: none; }
 
   /* BOTTOM NAV */
-  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid var(--border); display: flex; padding: 6px 0 max(6px, env(safe-area-inset-bottom)); z-index: 200; }
-  .bottom-nav button { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; border: none; background: none; color: var(--muted); font-size: 0.65rem; padding: 4px 2px; cursor: pointer; font-family: inherit; transition: color 0.2s; }
+  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid var(--border); z-index: 200; overflow: hidden; padding-bottom: max(6px, env(safe-area-inset-bottom)); }
+  .bnav-track { display: flex; overflow-x: auto; scrollbar-width: none; padding: 5px 4px 6px; gap: 0; }
+  .bnav-track::-webkit-scrollbar { display: none; }
+  .bnav-fade { position: absolute; right: 0; top: 0; bottom: 0; width: 36px; background: linear-gradient(to right, transparent, white 85%); pointer-events: none; z-index: 1; }
+  .bottom-nav button { flex-shrink: 0; min-width: 72px; display: flex; flex-direction: column; align-items: center; gap: 3px; border: none; background: none; color: var(--muted); font-size: 0.67rem; padding: 4px 6px; cursor: pointer; font-family: inherit; transition: color 0.2s; }
+
+  /* WIEDZA PAGE */
+  .wiedza-nav { display: flex; overflow-x: auto; background: white; border-bottom: 2px solid var(--border); padding: 0 6px; gap: 2px; scrollbar-width: none; }
+  .wiedza-nav::-webkit-scrollbar { display: none; }
+  .wiedza-nav button { flex-shrink: 0; padding: 9px 11px; border: none; background: none; font-family: inherit; font-size: 0.78rem; color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: all 0.2s; }
+  .wiedza-nav button.active { color: var(--brown); border-bottom-color: var(--gold); font-weight: bold; }
+  .wiedza-section { display: none; padding: 12px 14px 16px; }
+  .wiedza-section.active { display: block; }
+  .system-divider { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: white; font-weight: bold; padding: 5px 12px; border-radius: 20px; display: inline-block; margin: 14px 0 10px; }
+  .system-divider.ay { background: var(--gold); }
+  .system-divider.tcm { background: var(--green); }
+  .koncept-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 7px; overflow: hidden; }
+  .koncept-card.ay { border-left: 3px solid var(--gold); }
+  .koncept-card.tcm { border-left: 3px solid var(--green); }
+  .koncept-header { padding: 10px 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .koncept-header:active { background: var(--gold-light); }
+  .koncept-name { font-size: 0.92rem; font-weight: bold; color: var(--brown); }
+  .koncept-name .sys-badge { font-size: 0.62rem; font-weight: normal; padding: 1px 6px; border-radius: 8px; margin-left: 6px; vertical-align: middle; }
+  .sys-badge.ay { background: var(--gold-light); color: var(--brown); border: 1px solid var(--gold); }
+  .sys-badge.tcm { background: #e8f0e8; color: var(--green); border: 1px solid #c5d9c5; }
+  .koncept-body { display: none; padding: 0 12px 12px; border-top: 1px dashed var(--border); padding-top: 10px; }
+  .koncept-card.open .koncept-body { display: block; }
+  .koncept-card.open .k-chev { transform: rotate(180deg); }
+  .k-chev { font-size: 0.9rem; color: var(--muted); flex-shrink: 0; transition: transform 0.2s; }
+  .koncept-desc { font-size: 0.88rem; line-height: 1.6; color: var(--text); }
+  .koncept-link { display: inline-block; margin-top: 8px; font-size: 0.8rem; color: var(--green); text-decoration: none; border-bottom: 1px solid #c5d9c5; padding-bottom: 1px; }
+  .koncept-link:before { content: "→ "; }
+  .compare-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 8px; }
+  .compare-table th { background: var(--brown); color: white; padding: 7px 8px; text-align: left; font-weight: normal; }
+  .compare-table td { padding: 7px 8px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.4; }
+  .compare-table tr:nth-child(even) td { background: var(--gold-light); }
+  .compare-table td:first-child { font-weight: bold; color: var(--brown); white-space: nowrap; }
+  .source-group { margin-bottom: 16px; }
+  .source-group h4 { color: var(--brown); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid var(--border); }
+  .source-link { display: block; font-size: 0.87rem; color: var(--green); padding: 5px 0; border-bottom: 1px dotted var(--border); text-decoration: none; }
+  .source-link:last-child { border-bottom: none; }
+  .book-item { padding: 6px 0; font-size: 0.87rem; border-bottom: 1px dotted var(--border); }
+  .book-item:last-child { border-bottom: none; }
+  .book-title { font-style: italic; color: var(--brown); }
+  .book-author { color: var(--muted); font-size: 0.8rem; }
 
   /* FAZY */
   .phase-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 14px; overflow: hidden; box-shadow: var(--shadow); }
@@ -158,7 +201,8 @@
   .golden-rule { background: #fff0e8; border: 1px solid #d4763a; border-radius: 10px; padding: 12px 14px; font-size: 0.87rem; margin-top: 12px; }
   .golden-rule strong { color: #a0501a; display: block; margin-bottom: 4px; }
   .bottom-nav button.active { color: var(--brown); }
-  .bottom-nav button span.icon { font-size: 1.3rem; }
+  .bottom-nav button.active span.icon { filter: drop-shadow(0 0 3px rgba(200,150,62,0.4)); }
+  .bottom-nav button span.icon { font-size: 1.4rem; line-height: 1; }
 </style>
 </head>
 <body>
@@ -505,11 +549,30 @@
   </main>
 </div>
 
+<!-- PAGE: WIEDZA -->
+<div class="page" id="page-wiedza">
+  <nav class="wiedza-nav" id="wiedza-nav">
+    <button class="active" onclick="switchWiedza('w-ayurveda', this)">🌿 Ajurweda</button>
+    <button onclick="switchWiedza('w-tcm', this)">☯️ TCM</button>
+    <button onclick="switchWiedza('w-patologia', this)">⚡ Patologia</button>
+    <button onclick="switchWiedza('w-diagnostyka', this)">🔍 Diagnostyka</button>
+    <button onclick="switchWiedza('w-terapia', this)">🌀 Terapia</button>
+    <button onclick="switchWiedza('w-zywienie', this)">🍲 Żywienie</button>
+    <button onclick="switchWiedza('w-tabela', this)">📊 Tabela</button>
+    <button onclick="switchWiedza('w-zrodla', this)">📚 Źródła</button>
+  </nav>
+  <div id="wiedza-content"></div>
+</div>
+
 <nav class="bottom-nav">
-  <button class="active" onclick="showPage('recipes', this)"><span class="icon">🍲</span>Przepisy</button>
-  <button onclick="showPage('protocol', this)"><span class="icon">📋</span>Protokół</button>
-  <button onclick="showPage('fazy', this)"><span class="icon">🌿</span>Fazy</button>
-  <button onclick="showPage('dekalog', this)"><span class="icon">✨</span>Zasady</button>
+  <div class="bnav-track">
+    <button class="active" onclick="showPage('recipes', this)"><span class="icon">🍲</span>Przepisy</button>
+    <button onclick="showPage('protocol', this)"><span class="icon">📋</span>Protokół</button>
+    <button onclick="showPage('fazy', this)"><span class="icon">🌿</span>Fazy</button>
+    <button onclick="showPage('dekalog', this)"><span class="icon">✨</span>Zasady</button>
+    <button onclick="showPage('wiedza', this)"><span class="icon">🎓</span>Wiedza</button>
+  </div>
+  <div class="bnav-fade"></div>
 </nav>
 
 <script>
@@ -1150,6 +1213,42 @@ const RECIPES = [
       'Zdejmij z ognia, dodaj Ghee, wymieszaj.'
     ],
     props: ['Płatki owsiane: rozgrzewające, budują energię', 'Śliwki suszone: nawilżają jelita (Yin), poruszają zastałą energię (TMC)', 'Ghee: nośnik dla przypraw, wspomaga wchłanianie', 'Kardamon i cynamon: wspomagają trawienie']
+  },
+  {
+    num: 23, chapter: 'warzywa',
+    title: 'Terapeutyczne Maślane Purée',
+    subtitle: 'Aksamitny krem ziemniaczany na Fazę 1. Bez grudek, bez gryzienia – żołądek przyjmie z owacją.',
+    tags: ['Thermomix', 'Garnek', 'Faza 1'],
+    ingredients: [
+      '500 g obranych ziemniaków (pokrojonych w kostkę 2–3 cm)',
+      '200 g wody LUB resztki bulionu mięsnego/jarskiego (da niesamowitą moc!)',
+      '1 płaska łyżeczka soli (najlepiej kłodawskiej lub morskiej)',
+      '1 duża łyżka masła Ghee',
+      'Opcjonalnie: mała garść świeżego koperku (naturalny wróg wzdęć!) LUB szczypta kurkumy dla ciepła'
+    ],
+    tm: [
+      'Nałóż MOTYLEK na noże – to klucz do sukcesu. Bez niego purée będzie klejące.',
+      'Wrzuć ziemniaki, wlej wodę lub bulion, dodaj sól.',
+      'Załóż miarkę. Ustawienia: 25–30 min / 95°C / Prędkość 1. Ziemniaki mają się wręcz rozpadać – jeśli po 25 min nie są totalne miękkie, dodaj 5 min.',
+      'Zdejmij pokrywę ostrożnie (gorąca para!). Na dnie zostaje odrobina płynu – nie wylewaj go!',
+      'Wrzuć Ghee i koperek lub kurkumę (jeśli używasz).',
+      'Załóż miarkę. Ustawienia: 30 sek / Prędkość 3. Gotowe – gładki jak jedwab, złocisty obłoczek.'
+    ],
+    garnek: [
+      'Ziemniaki wrzuć do garnka, zalej wodą lub bulionem, dodaj sól.',
+      'Gotuj pod przykryciem na średnim ogniu ok. 20–25 minut, aż ziemniaki totalnie miękkie i rozpadające się.',
+      'Odlej większość wody, zostaw ok. 3–4 łyżki płynu na dnie.',
+      'Dodaj Ghee i koperek/kurkumę.',
+      'Tłucz tłuczkiem lub ubiaj ręcznym mikserem. Nie używaj blendera ręcznego – purée zrobi się klejące!'
+    ],
+    tip: 'PRZYGOTOWANIE DZIEŃ WCZEŚNIEJ: Obierz i pokrój ziemniaki (2–3 cm), zalej zimną wodą, wstaw do lodówki. Rano: wylej tę wodę i przepłucz ziemniaki pod bieżącą wodą – skrobia, która wyszła przez noc, zostanie wypłukana. Purée będzie lżejsze dla brzucha.',
+    props: [
+      'Ziemniaki: łagodne, bezpieczne dla śluzówki, wyciszają podrażniony żołądek',
+      'Ghee: nawilża śluzówkę jelit od środka, ułatwia wchłanianie',
+      'Koperek: naturalny wróg wzdęć i gazów (działanie jak koper włoski)',
+      'Bulion zamiast wody: buduje Krew i Qi (TMC), dodaje mocy odżywczej',
+      'Kurkuma: przeciwzapalna, ogrzewa od środka'
+    ]
   }
 ];
 
@@ -1271,6 +1370,220 @@ function toggleCheck(el) {
 }
 
 renderRecipes();
-</script>
+
+// ============================================================
+// WIEDZA DATA
+// ============================================================
+const WIEDZA = {
+  'w-ayurveda': [
+    { name:'Panchamahabhutas – Pięć Wielkich Elementów', sys:'ay', desc:'Wszystko we wszechświecie i w ciele człowieka zbudowane jest z pięciu elementów: Ziemia (Prthivi), Woda (Jala), Ogień (Agni), Powietrze (Vayu) i Przestrzeń/Eter (Akasha). Ich proporcje określają naturę każdej substancji.', url:'https://www.ayurveda.com/resources/articles/the-five-elements' },
+    { name:'Tridosha – Trzy Siły Życiowe', sys:'ay', desc:'Pięć elementów łączy się w trzy bioenergetyczne siły: Vata, Pitta i Kapha. Każda zarządza innymi funkcjami ciała i umysłu. Zdrowie to stan ich równowagi.', url:'https://www.chopra.com/articles/what-is-a-dosha' },
+    { name:'Vata – Dosza Powietrza i Przestrzeni', sys:'ay', desc:'Vata rządzi ruchem, oddechem, impulsami nerwowymi i kreatywnością. Jej nadmiar objawia się niepokojem, suchością, zaparciami i zmiennością nastroju. Równoważy ją ciepło, rutyna i tłuste potrawy.', url:'https://www.ayurveda.com/resources/articles/vata-dosha' },
+    { name:'Pitta – Dosza Ognia i Wody', sys:'ay', desc:'Pitta rządzi trawieniem, metabolizmem, temperaturą ciała i intelektem. Jej nadmiar daje stany zapalne, zgagę i drażliwość. Równoważy ją chłodzenie i spokój.', url:'https://www.ayurveda.com/resources/articles/pitta-dosha' },
+    { name:'Kapha – Dosza Wody i Ziemi', sys:'ay', desc:'Kapha rządzi strukturą, lubrykowaniem stawów, odpornością i pamięcią. Jej nadmiar to śluz, przyrost wagi i letarg. Równoważy ją ruch i lekkie, ciepłe potrawy.', url:'https://www.ayurveda.com/resources/articles/kapha-dosha' },
+    { name:'Prakriti – Konstytucja Wrodzona', sys:'ay', desc:'Unikalny, niezmienny skład dosz ustalony w momencie poczęcia – jak DNA. Określa naturalne predyspozycje i podatności. Podstawa ajurwedyjskiej profilaktyki.', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3215408/' },
+    { name:'Vikriti – Stan Aktualnej Nierównowagi', sys:'ay', desc:'Vikriti to obecny stan dosz – jak daleko odbiegamy od naszej Prakriti. Choroba pojawia się gdy Vikriti odbiega od Prakriti przez długi czas.', url:'https://www.chopra.com/articles/vikriti-your-current-state-of-balance' },
+    { name:'Agni – Ogień Trawienny', sys:'ay', desc:'Energia trawienia i transformacji – nie tylko pokarmów, ale też doświadczeń i emocji. Silne Agni = zdrowie. Słabe Agni = źródło większości chorób. Imbir, kumin i ciepłe jedzenie wzmacniają Agni.', url:'https://www.ayurveda.com/resources/articles/agni-the-digestive-fire' },
+    { name:'Cztery Rodzaje Agni', sys:'ay', desc:'Sama Agni (zrównoważony) – idealne trawienie. Vishama Agni (zmienny/Vata) – gazy, zaparcia. Tikshna Agni (ostry/Pitta) – zgaga, biegunka. Manda Agni (powolny/Kapha) – ciężkość, śluz, tycie.', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3215408/' },
+    { name:'Ama – Toksyny Niestrawności', sys:'ay', desc:'Lepki, toksyczny osad z niepełnie strawionego jedzenia i emocji. Blokuje kanały ciała, gasi Agni i jest pierwotną przyczyną chorób. Biały nalot na języku rano = Ama.', url:'https://www.chopra.com/articles/what-is-ama' },
+    { name:'Ojas – Esencja Witalności', sys:'ay', desc:'Kwintesencja doskonałego trawienia i wszystkich siedmiu tkanek. Paliwo dla odporności, blasku skóry i jasności duchowej. Ama niszczy Ojas; Ghee, mleko i spokój go budują.', url:'https://www.ayurveda.com/resources/articles/ojas-the-essence-of-vitality' },
+    { name:'Prana – Energia Życiowa', sys:'ay', desc:'Subtelna energia napędzająca oddech, ruch i świadomość – ajurwedyjski odpowiednik Qi. Zamieszkuje w jedzeniu, powietrzu i relacjach. Gotowanie z miłością dosłownie dodaje Prany do posiłku.', url:'https://www.chopra.com/articles/prana-the-science-of-breath' },
+    { name:'Tejas – Ogień Subtelny', sys:'ay', desc:'Subtelna forma Agni – ogień transformacji na poziomie komórkowym i mentalnym. Odpowiada za blask oczu, jasność intelektu i odwagę.', url:'https://www.chopra.com/articles/ojas-tejas-and-prana' },
+    { name:'Saptha Dhatu – Siedem Tkanek Ciała', sys:'ay', desc:'Siedem tkanek tworzonych z pokarmu kolejno: Rasa (osocze), Rakta (krew), Mamsa (mięśnie), Meda (tłuszcz), Asthi (kości), Majja (szpik/nerwy), Shukra/Artava (tkanka reprodukcyjna). Każda żywi się poprzednią.', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3215408/' },
+    { name:'Mala – Produkty Przemiany Materii', sys:'ay', desc:'Trzy główne produkty wydalnicze: Purisha (stolec), Mutra (mocz) i Sveda (pot). Ich regularność i jakość są kluczowym wskaźnikiem zdrowia.', url:'https://www.ayurveda.com/resources/articles/mala-the-waste-products' },
+    { name:'Srotas – Kanały Ciała', sys:'ay', desc:'Sieć kanałów transportujących substancje i energie – od grubych (przewód pokarmowy) po subtelne (kanały Prany). Blokada srotas przez Amę to mechanizm choroby.', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3330954/' },
+    { name:'Szat Rasa – Sześć Smaków', sys:'ay', desc:'Sześć smaków wpływających na dosze: słodki (buduje), kwaśny (pobudza Agni), słony (nawilża), ostry (rozgrzewa), gorzki (oczyszcza), cierpki (ściąga). Ideał to posiłek zawierający wszystkie sześć.', url:'https://www.chopra.com/articles/the-six-tastes-of-ayurveda' },
+    { name:'Virya – Natura Termiczna Substancji', sys:'ay', desc:'Energetyczne działanie substancji na ciało: rozgrzewające (ushna) lub chłodzące (shita). Imbir jest rozgrzewający nawet na zimno; mięta – chłodząca nawet ugotowana.', url:'https://www.ayurveda.com/resources/articles/understanding-food-as-medicine' },
+    { name:'Vipaka – Smak po Trawieniu', sys:'ay', desc:'Smak substancji ujawniający się PO strawieniu – może różnić się od pierwotnego. Miód ma smak słodki, ale Vipaka ostrą. Dlatego podgrzany miód jest w Ajurwedzie toksyczny.', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3215408/' },
+    { name:'Dinacharya – Dzienna Rutyna', sys:'ay', desc:'Plan dnia zsynchronizowany z rytmami natury: wstanie przed wschodem słońca, skrobanie języka, olejowanie (abhyanga), medytacja, posiłki o stałych porach, sen przed 22:00.', url:'https://www.chopra.com/articles/dinacharya-the-importance-of-daily-routine' },
+    { name:'Ritucharya – Sezonowa Rutyna', sys:'ay', desc:'Dostosowanie diety i trybu życia do sześciu pór roku. Wiosna = oczyszczanie (Kapha), Lato = chłodzenie (Pitta), Zima = rozgrzewanie i wzmacnianie (Vata/Kapha).', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3492900/' },
+    { name:'Panchakarma – Pięciokrotne Oczyszczanie', sys:'ay', desc:'Głęboki program detoksykacyjny: Vamana (wymioty lecznicze), Virechana (przeczyszczanie), Basti (lewatywy ziołowe), Nasya (oczyszczanie nosa), Rakta Moksha. Poprzedza go olejowanie i poty parowe.', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3924999/' },
+    { name:'Abhyanga – Olejowanie Ciała', sys:'ay', desc:'Codzienny masaż ciepłym olejem dostosowanym do doszy. Karmi tkanki, wycisza Vata, wspomaga limfę i poprawia sen. W Ajurwedzie tak ważny jak mycie zębów.', url:'https://www.chopra.com/articles/abhyanga-the-ayurvedic-self-massage' },
+    { name:'Nasya – Olejowanie Nosa', sys:'ay', desc:'Kilka kropel ciepłego oleju do każdego nozdrza rano. Czyści kanały głowy, wspomaga jasność umysłu i pamięć. Szczególnie wskazane przy mgle mózgowej.', url:'https://www.ayurveda.com/resources/articles/nasya' },
+    { name:'Basti – Lewatywy Ziołowe', sys:'ay', desc:'Wprowadzenie ciepłych olejów lub wywarów do jelita grubego – najskuteczniejszy zabieg Panchakarmy dla zaburzeń Vata. Oczyszcza głęboko i reguluje układ nerwowy.', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3924999/' },
+    { name:'Triphala – Trzy Owoce', sys:'ay', desc:'Klasyczna formuła z trzech owoców: Amalaki, Bibhitaki i Haritaki. Delikatnie reguluje trawienie, oczyszcza kanały ciała. Uważana za rasayanę (środek odmładzający).', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5567597/' },
+    { name:'Rasayana – Środki Odmładzające', sys:'ay', desc:'Praktyki i substancje odnawiające tkanki, wzmacniające odporność i opóźniające starzenie: Ashwagandha, Shatavari, Amalaki, Ghee, miód, mleko. Stosuje się po oczyszczeniu ciała.', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3611646/' },
+    { name:'Ashwagandha (Withania somnifera)', sys:'ay', desc:'Królowa ajurwedyjskich adaptogenów – redukuje kortyzol, wzmacnia odporność, poprawia sen i wytrzymałość. Odpowiednik żeń-szenia w TCM.', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3252722/' },
+    { name:'Shatavari (Asparagus racemosus)', sys:'ay', desc:'Główny ziołowy tonik dla kobiet – równoważy hormony, nawilża tkanki Yin, wspomaga płodność i laktację. Buduje Ojas i płyny ciała.', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4027291/' },
+    { name:'Ghee – Masło Klarowane', sys:'ay', desc:'W Ajurwedzie Ghee to lekarstwo: nośnik dla ziół (yogavahi), paliwo dla Agni, budulec Ojasu i środek nawilżający tkanki. Im dłużej leżakuje, tym silniejsze działanie lecznicze.', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4296439/' }
+  ],
+
+  'w-tcm': [
+    { name:'Yin i Yang', sys:'tcm', desc:'Fundamentalna dualność TCM: Yin = ciemność, chłód, spokój, wnętrze, substancja. Yang = światło, ciepło, ruch, zewnętrze, funkcja. Żadne nie istnieje bez drugiego. Choroba to zachwianie ich dynamicznej równowagi.', url:'https://www.britannica.com/topic/yin-yang' },
+    { name:'Qi (Chi) – Energia Życiowa', sys:'tcm', desc:'Siła napędzająca wszystkie funkcje życiowe: oddech, trawienie, ruch, myślenie, odporność. Choroba = zablokowane, osłabione lub zdezorientowane Qi. Jedzenie, oddech i akupunktura to narzędzia regulacji Qi.', url:'https://www.tcmworld.org/what-is-tcm/qi/' },
+    { name:'Sześć Rodzajów Qi', sys:'tcm', desc:'Yuan Qi (wrodzona/Nerki), Gu Qi (z jedzenia/Śledziona), Kong Qi (z powietrza/Płuca), Zhen Qi (prawdziwa, krąży meridianami), Wei Qi (obronna, tarcza immunologiczna), Ying Qi (odżywcza, z Krwią).', url:'https://www.shen-nong.com/eng/principles/whatisqi.html' },
+    { name:'Xue – Krew w TCM', sys:'tcm', desc:'Krew w TCM to nie tylko substancja fizyczna – to gęsta forma Qi, nośnik odżywienia i siedlisko Shen. Niedobór: bladość, kołatanie serca, zaburzenia snu, mgła mózgowa. Buduje ją dieta i odpoczynek.', url:'https://www.tcmworld.org/what-is-tcm/blood/' },
+    { name:'Jin-Ye – Płyny Ciała', sys:'tcm', desc:'Jin (lżejsze, na powierzchni: pot, łzy, ślina) i Ye (gęstsze, wewnętrzne: płyn stawowy, szpik). Niedobór Jin = suchość skóry i błon śluzowych; Ye = choroby zwyrodnieniowe.', url:'https://www.shen-nong.com/eng/principles/bodyfluids.html' },
+    { name:'Jing – Esencja', sys:'tcm', desc:'Najgłębsza substancja ciała, przechowywana w Nerkach. Część wrodzona (od rodziców) + pozyskiwana z jedzenia i snu. Wyczerpanie: szybkie starzenie, osteoporoza, utrata włosów, impotencja.', url:'https://www.tcmworld.org/what-is-tcm/jing-essence/' },
+    { name:'Shen – Duch i Świadomość', sys:'tcm', desc:'Świadomość, umysł i duch – mieszka w Sercu. Błyszczące oczy i dobra pamięć = zdrowy Shen. Zaburzony Shen = bezsenność, lęki, depresja. Stabilizują go spokój, Krew i herbaty uspokajające.', url:'https://www.tcmworld.org/what-is-tcm/shen-spirit/' },
+    { name:'Pięć Elementów – Wu Xing', sys:'tcm', desc:'Pięć faz: Drewno, Ogień, Ziemia, Metal, Woda. Każdy odpowiada narządom, emocjom, smakom i porom roku. Cykl generowania (Sheng) i kontrolowania (Ke) opisuje fizjologię i patologię organizmu.', url:'https://www.britannica.com/topic/wuxing' },
+    { name:'Drewno – Wątroba i Woreczek', sys:'tcm', desc:'Wiosna, Wiatr, smak kwaśny, kolor zielony, emocja: gniew/frustracja. Wątroba zarządza przepływem Qi i emocji, magazynuje Krew, odpowiada za wzrok i ścięgna.', url:'https://www.shen-nong.com/eng/principles/fiveelements.html' },
+    { name:'Ogień – Serce i Jelito Cienkie', sys:'tcm', desc:'Lato, Upał, smak gorzki, kolor czerwony, emocja: radość (nadmierna = choroba). Serce rządzi Krwią i Shen (świadomością). Siedlisko umysłu i ducha.', url:'https://www.shen-nong.com/eng/principles/fiveelements.html' },
+    { name:'Ziemia – Śledziona i Żołądek', sys:'tcm', desc:'Późne Lato, Wilgoć, smak słodki, kolor żółty, emocja: zamartwianie/nadmierne myślenie. Śledziona transformuje jedzenie w Qi i Krew – to centrum trawienia w TCM.', url:'https://www.shen-nong.com/eng/principles/fiveelements.html' },
+    { name:'Metal – Płuca i Jelito Grube', sys:'tcm', desc:'Jesień, Suchość, smak ostry/pikantny, kolor biały, emocja: smutek/żal. Płuca rządzą Qi i oddechem, zarządzają Wei Qi (odpornością) na powierzchni ciała.', url:'https://www.shen-nong.com/eng/principles/fiveelements.html' },
+    { name:'Woda – Nerki i Pęcherz', sys:'tcm', desc:'Zima, Zimno, smak słony, kolor czarny, emocja: strach. Nerki przechowują Jing (esencję życiową), rządzą kośćmi, szpikiem, mózgiem i rozrodem. Fundament całego Yin i Yang w ciele.', url:'https://www.shen-nong.com/eng/principles/fiveelements.html' },
+    { name:'Zang-Fu – Narządy Wewnętrzne', sys:'tcm', desc:'Zang (pełne, Yin): Serce, Płuca, Śledziona, Wątroba, Nerki + Osierdzie. Fu (puste, Yang): Jelito Cienkie, Jelito Grube, Żołądek, Woreczek Żółciowy, Pęcherz + Potrójny Ogrzewacz. Funkcje znacznie wykraczają poza anatomię zachodnią.', url:'https://www.tcmworld.org/what-is-tcm/internal-organs/' },
+    { name:'Meridiany – Kanały Energetyczne', sys:'tcm', desc:'14 głównych kanałów, którymi krąży Qi i Krew. 12 meridianów głównych odpowiada narządom Zang-Fu. 2 naczynia szczególne: Du Mai (Zarządca Yang) i Ren Mai (Zarządca Yin). Akupunktura stymuluje punkty na meridianach.', url:'https://www.acupuncture.com/education/theory/meridians.htm' },
+    { name:'San Jiao – Potrójny Ogrzewacz', sys:'tcm', desc:'Jedyny narząd Fu bez odpowiednika anatomicznego. Rządzi dystrybucją ciepła, Qi i płynów w trzech przestrzeniach: górnej (Serce/Płuca), środkowej (Śledziona/Żołądek) i dolnej (Nerki/Jelita).', url:'https://www.shen-nong.com/eng/principles/tripleburner.html' }
+  ],
+
+  'w-patologia': [
+    { name:'Pragya Aparadha – Błąd Intelektu (Aj.)', sys:'ay', desc:'Najgłębsza przyczyna choroby wg Ajurwedy: zapomnienie o własnej naturze prowadzące do nieodpowiednich wyborów. Dosłownie „grzech intelektu" – korzeń wszelkiej nierównowagi.', url:'https://www.chopra.com/articles/the-root-cause-of-disease-according-to-ayurveda' },
+    { name:'Asatmyendriyartha Samyoga (Aj.)', sys:'ay', desc:'Choroba z nadmiernego, zbyt słabego lub złego używania zmysłów: zbyt głośna muzyka, za długo przed ekranem, za dużo lub za mało jedzenia, nieodpowiedni dotyk.', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3215408/' },
+    { name:'Parinama – Czas i Sezon (Aj.)', sys:'ay', desc:'Choroby wywoływane przez zmiany sezonów, gdy nie dostosowujemy Ritucharyi. Każda pora roku ma dominującą doszę i wymaga odpowiedniej diety.', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3492900/' },
+    { name:'Wiatr – Feng (TCM)', sys:'tcm', desc:'Najczęstszy patogen zewnętrzny – nośnik innych patogenów (Wiatr-Zimno, Wiatr-Upał). Atakuje górę ciała, powoduje nagłe objawy i ruch (swędzenie, drżenie, zawroty). „Tysiąc chorób pochodzi z Wiatru."', url:'https://www.shen-nong.com/eng/principles/sixpathogenic.html' },
+    { name:'Zimno – Han (TCM)', sys:'tcm', desc:'Blokuje Qi i Krew, kurczy meridiany, wywołuje ból. Zimne jedzenie, napoje i klimatyzacja to główne źródła wewnętrznego Zimna. Leczy się ciepłem, imbirem i moksybucją.', url:'https://www.shen-nong.com/eng/principles/sixpathogenic.html' },
+    { name:'Wilgoć – Shi (TCM) ⚠️ kluczowa!', sys:'tcm', desc:'Lepki, ciężki patogen blokujący Qi Śledziony. Powoduje: flegmę, obrzęki, ciężkość głowy, mgłę mózgową, wzdęcia i śluz. Produkują ją mleko krowie, cukier, mąka, zimne napoje i siedzący tryb życia.', url:'https://www.tcmworld.org/what-is-tcm/dampness/' },
+    { name:'Flegma – Tan (TCM)', sys:'tcm', desc:'Gęstsza forma Wilgoci. Może być fizyczna (śluz w płucach) lub niematerialna (guzki, mgła mózgowa, zaburzenia psychiczne). „Flegma jest matką stu chorób." Osuszają ją kasza jaglana i imbir.', url:'https://www.shen-nong.com/eng/principles/phlegm.html' },
+    { name:'Gorąco – Re (TCM)', sys:'tcm', desc:'Przyspiesza, zapala i wysusza. Może być zewnętrzne (infekcja) lub wewnętrzne (z deficytu Yin, emocji lub pikantnych potraw). Objawy: pragnienie, czerwień, gorączka, drażliwość.', url:'https://www.shen-nong.com/eng/principles/sixpathogenic.html' },
+    { name:'Suchość – Zao (TCM)', sys:'tcm', desc:'Uszkadza płyny ciała, Płuca i Jelito Grube. Objawy: sucha skóra, kaszel bez śluzu, zaparcia, suchość w ustach. Nawilżają: gruszka, miód, mleko roślinne.', url:'https://www.shen-nong.com/eng/principles/sixpathogenic.html' },
+    { name:'Upał Letni – Shu (TCM)', sys:'tcm', desc:'Sezonowy patogen lata – wysysa Qi i płyny, powoduje zmęczenie, pot i pragnienie. Jedyny patogen ściśle sezonowy spośród sześciu.', url:'https://www.shen-nong.com/eng/principles/sixpathogenic.html' },
+    { name:'Siedem Emocji – Qi Qing (TCM)', sys:'tcm', desc:'Każda emocja nadmierna lub stłumiona uszkadza konkretny narząd: Gniew → Wątroba, Radość (nadmierna) → Serce, Zamartwianie → Śledziona, Smutek → Płuca, Strach → Nerki, Przerażenie → Serce+Nerki, Obsesja → Śledziona.', url:'https://www.tcmworld.org/what-is-tcm/seven-emotions/' }
+  ],
+
+  'w-diagnostyka': [
+    { name:'Nadi Pariksha – Badanie Pulsu (Aj.)', sys:'ay', desc:'Trzy palce na nadgarstku odczytują jednocześnie trzy dosze i narządy. Vata = wąż (falujący), Pitta = żaba (skaczący), Kapha = łabędź (gładki, powolny).', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3761655/' },
+    { name:'Jihwa Pariksha – Badanie Języka (Aj.)', sys:'ay', desc:'Gruby biały nalot = Ama Kapha. Żółty = Ama Pitta. Drżący = Vata. Czerwony = Pitta/zapalenie. Badaj rano, przed myciem zębów. Język mówi prawdę o stanie trawienia.', url:'https://www.ayurveda.com/resources/articles/tongue-diagnosis' },
+    { name:'Ashtavidha Pariksha – Osiem Metod (Aj.)', sys:'ay', desc:'Klasyczna diagnostyka obejmuje 8 narzędzi: Nadi (puls), Mutra (mocz), Mala (stolec), Jihwa (język), Shabda (głos), Sparsha (dotyk/skóra), Drik (oczy), Akriti (wygląd).', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3215408/' },
+    { name:'Si Zhen – Cztery Metody Badania (TCM)', sys:'tcm', desc:'Obserwacja (Wang) – wygląd, twarz, język. Słuchanie i wąchanie (Wen) – głos, oddech, zapachy. Wywiad (Wen) – historia objawów, emocje, sen. Palpacja (Qie) – badanie pulsu.', url:'https://www.shen-nong.com/eng/principles/fourexaminations.html' },
+    { name:'Badanie Pulsu TCM – 28 Jakości', sys:'tcm', desc:'Trzy pozycje na każdym nadgarstku (Cun, Guan, Chi). 28 jakości pulsu: Slippery (Wilgoć/ciąża), Wiry (stagnacja Wątroby), Thin (niedobór Krwi), Slow (Zimno), Rapid (Gorąco) i inne.', url:'https://www.acupuncture.com/education/theory/pulse.htm' },
+    { name:'Badanie Języka TCM – Mapa Narządów', sys:'tcm', desc:'Czubek = Serce/Płuca, środek = Śledziona/Żołądek, tył = Nerki, boki = Wątroba/Woreczek. Kolor, nalot, wilgotność i kształt – każdy element ma znaczenie diagnostyczne.', url:'https://www.shen-nong.com/eng/principles/tongueexam.html' },
+    { name:'Ba Gang – Osiem Zasad Diagnozowania', sys:'tcm', desc:'Fundamentalny framework TCM: Yin/Yang, Wewnętrzne/Zewnętrzne, Zimno/Gorąco, Niedobór/Nadmiar. Każdy objaw umieszczamy na tych czterech osiach, tworząc profil choroby.', url:'https://www.shen-nong.com/eng/principles/eightprinciples.html' },
+    { name:'Xu / Shi – Niedobór i Nadmiar (TCM)', sys:'tcm', desc:'Xu (niedobór): brak Qi, Krwi, Yin lub Yang – objawy słabe, przewlekłe, wymagają tonizowania. Shi (nadmiar): nadmiar Zimna, Gorąca, Wilgoci – objawy ostre, wymagają rozproszenia.', url:'https://www.shen-nong.com/eng/principles/eightprinciples.html' }
+  ],
+
+  'w-terapia': [
+    { name:'Tarka – Podsmażanie Przypraw (Aj.)', sys:'ay', desc:'Technika rozgrzewania przypraw w Ghee lub oleju przed dodaniem do potrawy. Uwalnia olejki eteryczne i zwiększa biodostępność fitozwiązków. Fundamentalna technika w tej książce kucharskiej.', url:'https://www.chopra.com/articles/spices-and-ayurveda' },
+    { name:'Yoga – Ruch jako Medycyna (Aj.)', sys:'ay', desc:'Asany dostosowane do doszy: Vata = spokojne uziemiające pozycje, Pitta = chłodzące, Kapha = dynamiczne i energizujące. Joga to element terapii, nie tylko ćwiczenia.', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3705695/' },
+    { name:'Pranayama – Ćwiczenia Oddechowe (Aj.)', sys:'ay', desc:'Nadi Shodhana (naprzemienne oddychanie) = równoważy wszystkie dosze. Kapalabhati = oczyszczająca, wzmacnia Kapha. Sheetali = chłodząca, łagodzi Pittę.', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3017963/' },
+    { name:'Akupunktura – Zhenjiu (TCM)', sys:'tcm', desc:'Wkłuwanie cienkich igieł w punkty meridianów reguluje Qi i usuwa blokady. Jedna z najlepiej przebadanych terapii tradycyjnych – skuteczność potwierdzona dla bólu przewlekłego, migreny, bezpłodności.', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4914489/' },
+    { name:'Moksybucja – Moxa (TCM)', sys:'tcm', desc:'Przypalanie suszonej bylicy chińskiej nad punktami akupunkturowymi. Głębokie ciepło usuwa Zimno i Wilgoć, tonizuje Yang i Qi. Punkt Zusanli (ST36) + moxa = klasyk na wzmocnienie Śledziony.', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5871212/' },
+    { name:'Gua Sha i Bańki – Ba Guan (TCM)', sys:'tcm', desc:'Gua Sha – skrobanie skóry do usunięcia zastałej krwi. Bańki – ssące kubki na skórę. Obydwie techniki usuwają stagnację, rozpraszają Zimno i Wiatr, przyspieszają regenerację mięśni.', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5871212/' },
+    { name:'Tui Na – Masaż Leczniczy (TCM)', sys:'tcm', desc:'Terapeutyczny masaż oparty na meridianach i punktach. Łączy ucisk, rozcieranie i mobilizację stawów. Stosowany przy bólu, stagnacji Qi i Krwi oraz dysfunkcjach układu ruchu.', url:'https://www.tcmworld.org/what-is-tcm/tui-na/' },
+    { name:'Qi Gong (TCM)', sys:'tcm', desc:'Ćwiczenia łączące ruch, oddech i intencję dla regulacji Qi w meridianach. Udowodniona skuteczność w redukcji stresu, nadciśnienia i chronic fatigue. Zarówno medycyna jak i praktyka duchowa.', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4914489/' },
+    { name:'Tai Chi (TCM)', sys:'tcm', desc:'Powolna, medytacyjna forma ruchu ze sztuk walki – ruchoma medytacja regulująca Qi. Wzmacnia kości i poprawia równowagę. Szczególnie zalecana przy Deficycie Yin i osobom starszym.', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5534445/' },
+    { name:'Zioła i Formuły TCM', sys:'tcm', desc:'TCM zawsze stosuje formuły (zestawy ziół), nigdy pojedyncze rośliny. Klasyki: Si Wu Tang (tonizuje Krew), Liu Wei Di Huang Wan (tonizuje Yin Nerek), Xiao Yao San (harmonizuje Wątrobę i Śledzionę).', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3876660/' }
+  ],
+
+  'w-zywienie': [
+    { name:'Natura Termiczna Pokarmów', sys:'ay', desc:'Zarówno Ajurweda (Virya) jak i TCM opisują pokarmy jako rozgrzewające, neutralne lub chłodzące – niezależnie od fizycznej temperatury. Imbir jest rozgrzewający nawet na zimno; ogórek – chłodzący nawet ugotowany.', url:'https://www.shen-nong.com/eng/front/foodtherapy.html' },
+    { name:'Sześć Smaków – Ajurweda', sys:'ay', desc:'Słodki (buduje tkanki), Kwaśny (pobudza Agni), Słony (nawilża, rozgrzewa), Ostry (rozgrzewa, rozprasza), Gorzki (oczyszcza, osusza), Cierpki (ściąga, wysusza). Każdy wpływa na dosze inaczej.', url:'https://www.chopra.com/articles/the-six-tastes-of-ayurveda' },
+    { name:'Pięć Smaków – TCM', sys:'tcm', desc:'Kwaśny (Wątroba/Woreczek), Gorzki (Serce/Jelito Cienkie), Słodki (Śledziona/Żołądek), Ostry/Pikantny (Płuca/Jelito Grube), Słony (Nerki/Pęcherz). Każdy smak odżywia i może nadwyrężyć przypisany narząd.', url:'https://www.shen-nong.com/eng/front/foodtherapy.html' },
+    { name:'Congee / Zhou – Kleik Ryżowy', sys:'tcm', desc:'Podstawowy środek leczniczy TCM: buduje Qi Żołądka i Śledziony, nawilża, łatwy do strawienia. Tonizowany dodatkami: daktyle (budują Krew), imbir (rozgrzewa), grzyby Shiitake (wzmacniają Wei Qi).', url:'https://www.shen-nong.com/eng/front/foodtherapy.html' },
+    { name:'Kitchari – Ajurwedyjski Kleik Detoks', sys:'ay', desc:'Ryż basmati + fasolka mung + Ghee + Tarka (imbir, kumin, kurkuma). Równoważy wszystkie trzy dosze, jest jednocześnie łatwo strawny, odżywczy i oczyszczający – podstawa Panchakarmy.', url:'https://www.chopra.com/articles/what-is-kitchari' },
+    { name:'Zasady Zdrowego Gotowania – TCM', sys:'tcm', desc:'Zawsze gotuj warzywa (surowe osłabiają Śledzionę). Ostatni posiłek przed 19:00. Ciepłe napoje przez cały dzień. Unikaj mrożonek i zimnych pokarmów. Jedz regularnie o stałych porach.', url:'https://www.shen-nong.com/eng/front/foodtherapy.html' },
+    { name:'Zasady Zdrowego Gotowania – Ajurweda', sys:'ay', desc:'Gotuj z miłością (Prana w jedzeniu). Używaj świeżych składników. Dostosuj smaki do swojej doszy. Jedz w spokoju bez ekranów. Największy posiłek w południe (Agni najsilniejsze).', url:'https://www.chopra.com/articles/ayurvedic-nutrition' }
+  ],
+
+  'w-tabela': null,
+  'w-zrodla': null
+};
+
+const COMPARE_ROWS = [
+  ['Energia życiowa','Prana','Qi'],
+  ['Esencja wrodzona','Ojas (częściowo)','Jing'],
+  ['Ogień trawienny','Agni','Ogień Śledziony / Żołądka'],
+  ['Toksyny / Blokada','Ama','Wilgoć / Flegma'],
+  ['Konstytucja','Prakriti','Brak bezp. odpowiednika'],
+  ['Kanały energetyczne','Srotas / Nadi','Meridiany (Jingluo)'],
+  ['5 elementów','Ziemia, Woda, Ogień, Powietrze, Przestrzeń','Drewno, Ogień, Ziemia, Metal, Woda'],
+  ['Duch / Świadomość','Shen (sanskr.)','Shen (chiński)'],
+  ['Diagnostyka pulsu','Nadi Pariksha','Mai Zhen'],
+  ['Główna terapia','Panchakarma / Dieta','Akupunktura / Zioła'],
+  ['Masaż leczniczy','Abhyanga','Tui Na'],
+  ['Ruch leczniczy','Joga / Pranayama','Qi Gong / Tai Chi'],
+  ['Sezonowość','Ritucharya','Wu Xing + pory roku'],
+  ['Badanie języka','Jihwa Pariksha','She Zhen'],
+  ['Środek odmładzający','Rasayana','Bu Jing (uzupełnianie Jing)'],
+];
+
+function renderKoncepts(list) {
+  return list.map((k,i) => `
+    <div class="koncept-card ${k.sys}" onclick="toggleKoncept(this)">
+      <div class="koncept-header">
+        <div class="koncept-name">${k.name}</div>
+        <span class="k-chev">▼</span>
+      </div>
+      <div class="koncept-body">
+        <p class="koncept-desc">${k.desc}</p>
+        <a class="koncept-link" href="${k.url}" target="_blank" rel="noopener">Czytaj więcej</a>
+      </div>
+    </div>`).join('');
+}
+
+function renderWiedza(sectionId) {
+  const container = document.getElementById('wiedza-content');
+
+  if (sectionId === 'w-tabela') {
+    container.innerHTML = `<div class="wiedza-section active" id="w-tabela">
+      <div class="chapter-header"><h2>Tabela Porównawcza</h2><p>Ajurweda vs TCM – odpowiedniki pojęć</p></div>
+      <div class="protocol-box" style="padding:0;overflow:hidden">
+        <table class="compare-table">
+          <tr><th>Pojęcie</th><th>🌿 Ajurweda</th><th>☯️ TCM</th></tr>
+          ${COMPARE_ROWS.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}
+        </table>
+      </div>
+    </div>`;
+    return;
+  }
+
+  if (sectionId === 'w-zrodla') {
+    container.innerHTML = `<div class="wiedza-section active" id="w-zrodla">
+      <div class="chapter-header"><h2>Źródła i Lektury</h2></div>
+      <div class="protocol-box">
+        <div class="source-group">
+          <h4>🌿 Ajurweda – online</h4>
+          <a class="source-link" href="https://www.ayurveda.com" target="_blank">ayurveda.com – oficjalne zasoby</a>
+          <a class="source-link" href="https://www.chopra.com/articles" target="_blank">chopra.com – centrum Chopry</a>
+          <a class="source-link" href="https://pubmed.ncbi.nlm.nih.gov/?term=ayurveda" target="_blank">PubMed – badania naukowe</a>
+          <a class="source-link" href="https://www.nccih.nih.gov/health/ayurvedic-medicine-in-depth" target="_blank">NCCIH / NIH – przegląd naukowy</a>
+        </div>
+        <div class="source-group">
+          <h4>☯️ TCM – online</h4>
+          <a class="source-link" href="https://www.tcmworld.org/what-is-tcm/" target="_blank">tcmworld.org – encyklopedia TCM</a>
+          <a class="source-link" href="https://www.shen-nong.com" target="_blank">shen-nong.com – szczegółowa encyklopedia</a>
+          <a class="source-link" href="https://www.acupuncture.com" target="_blank">acupuncture.com – teoria i praktyka</a>
+          <a class="source-link" href="https://pubmed.ncbi.nlm.nih.gov/?term=traditional+chinese+medicine" target="_blank">PubMed – badania TCM</a>
+        </div>
+        <div class="source-group">
+          <h4>🌍 Obie tradycje</h4>
+          <a class="source-link" href="https://www.who.int/traditional-complementary-integrative-medicine" target="_blank">WHO – medycyna tradycyjna</a>
+          <a class="source-link" href="https://www.hindawi.com/journals/ecam/" target="_blank">Evidence-Based Complementary Medicine</a>
+        </div>
+        <div class="source-group">
+          <h4>📖 Książki – Ajurweda</h4>
+          <div class="book-item"><span class="book-title">Prakriti</span> <span class="book-author">– Robert Svoboda (klasyk po ang.)</span></div>
+          <div class="book-item"><span class="book-title">The Complete Book of Ayurvedic Home Remedies</span> <span class="book-author">– Vasant Lad</span></div>
+          <div class="book-item"><span class="book-title">Absolute Beauty</span> <span class="book-author">– Pratima Raichur (ajurweda dla kobiet)</span></div>
+        </div>
+        <div class="source-group">
+          <h4>📖 Książki – TCM</h4>
+          <div class="book-item"><span class="book-title">The Web That Has No Weaver</span> <span class="book-author">– Ted Kaptchuk (najlepsze wprowadzenie)</span></div>
+          <div class="book-item"><span class="book-title">Between Heaven and Earth</span> <span class="book-author">– Beinfield & Korngold</span></div>
+          <div class="book-item"><span class="book-title">The Tao of Healthy Eating</span> <span class="book-author">– Bob Flaws (dieta TCM)</span></div>
+        </div>
+      </div>
+    </div>`;
+    return;
+  }
+
+  const data = WIEDZA[sectionId];
+  if (!data) return;
+  container.innerHTML = `<div class="wiedza-section active">${renderKoncepts(data)}</div>`;
+}
+
+function switchWiedza(sectionId, btn) {
+  document.querySelectorAll('.wiedza-nav button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderWiedza(sectionId);
+}
+
+function toggleKoncept(card) {
+  card.classList.toggle('open');
+}
+
+// init first wiedza section
+document.addEventListener('DOMContentLoaded', () => renderWiedza('w-ayurveda'));
+
 </body>
 </html>
